@@ -124,6 +124,9 @@
 </head>
 <body class="min-h-screen antialiased overflow-x-hidden text-gray-900 dark:text-white">
 
+  <!-- Background Layer -->
+  <div id="bgLayer" class="fixed inset-0 -z-50 bg-white dark:bg-black transition-colors duration-300"></div>
+
   <!-- Quick Period Filters -->
   <div class="flex flex-wrap justify-center gap-3 pt-8 px-4 text-sm font-medium animate-fade-in relative z-10">
     <button id="periodToday" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300 text-gray-900 dark:text-white">Hoy</button>
@@ -359,10 +362,8 @@
       const savedTheme = localStorage.getItem('theme') || 'dark';
       if (savedTheme === 'light') {
         document.documentElement.classList.remove('dark');
-        document.body.style.background = 'linear-gradient(to bottom right, #ffffff, #f9fafb, #f5f5f5)';
       } else {
         document.documentElement.classList.add('dark');
-        document.body.style.background = '#0a0a0a';
       }
     }
 
@@ -370,11 +371,9 @@
       const html = document.documentElement;
       if (html.classList.contains('dark')) {
         html.classList.remove('dark');
-        document.body.style.background = 'linear-gradient(to bottom right, #ffffff, #f9fafb, #f5f5f5)';
         localStorage.setItem('theme', 'light');
       } else {
         html.classList.add('dark');
-        document.body.style.background = '#0a0a0a';
         localStorage.setItem('theme', 'dark');
       }
       // Recreate charts and insights with new colors
