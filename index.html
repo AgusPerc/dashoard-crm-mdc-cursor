@@ -563,6 +563,7 @@
       const colFase = detectColumn(headers, ['fase', 'stage', 'etapa']);
       const colComercial = detectColumn(headers, ['comercial', 'vendedor', 'owner', 'ejecutivo']);
       const colEstatus = detectColumn(headers, ['motivo por que no se concreto', 'motivo_por_que_no_se_concreto', 'estatus', 'status', 'estado']);
+      const colHoras = detectColumn(headers, ['horas de servicio', 'horas_de_servicio', 'horas', 'duracion']);
 
       if (!colFecha || !colCanal || !colFase || !colComercial || !colEstatus) {
         const missing = [];
@@ -584,7 +585,8 @@
             canal: (row[colCanal] || '').trim() || 'Sin especificar',
             fase: (row[colFase] || '').trim() || 'Sin especificar',
             comercial: (row[colComercial] || '').trim() || 'Sin especificar',
-            estatus: normalizeStatus(row[colEstatus])
+            estatus: normalizeStatus(row[colEstatus]),
+            horas: colHoras ? (row[colHoras] || '').trim() : null
           };
         })
         .filter(row => row !== null);
@@ -1034,23 +1036,44 @@
         });
       }
 
-      const faseCancelados = {};
-      filteredData
-        .filter(d => d.estatus === 'Cancelado')
-        .forEach(row => {
-          faseCancelados[row.fase] = (faseCancelados[row.fase] || 0) + 1;
-        });
+      // Insight sobre mejor tasa de conversión por horas de servicio
+      const horasStats = {};
+      filteredData.forEach(row => {
+        if (row.horas) {
+          if (!horasStats[row.horas]) {
+            horasStats[row.horas] = { total: 0, concretados: 0 };
+          }
+          horasStats[row.horas].total++;
+          if (row.estatus === 'Concretado') {
+            horasStats[row.horas].concretados++;
+          }
+        }
+      });
 
-      const topFaseCancelado = Object.entries(faseCancelados).sort((a, b) => b[1] - a[1])[0];
+      const horasWithRates = Object.entries(horasStats)
+        .map(([horas, stats]) => ({
+          horas,
+          total: stats.total,
+          concretados: stats.concretados,
+          tasa: stats.total > 0 ? (stats.concretados / stats.total) * 100 : 0
+        }))
+        .filter(item => item.total >= 2) // Solo mostrar si hay al menos 2 leads
+        .sort((a, b) => b.tasa - a.tasa);
 
-      if (topFaseCancelado) {
-        const [fase, count] = topFaseCancelado;
-        const totalCancelados = filteredData.filter(d => d.estatus === 'Cancelado').length;
-        const percentage = totalCancelados > 0 ? ((count / totalCancelados) * 100).toFixed(1) : 0;
+      if (horasWithRates.length > 0) {
+        const mejor = horasWithRates[0];
+        const comparacion = horasWithRates.length > 1
+          ? horasWithRates.slice(1).map(h => `${h.horas} (${h.tasa.toFixed(1)}%)`).join(' y ')
+          : '';
+
+        const textoComparacion = comparacion
+          ? `, superando a ${comparacion}`
+          : '';
+
         insights.push({
-          icon: 'alert-triangle',
-          iconColor: 'text-red-400',
-          text: `La fase <strong>${fase}</strong> concentra la mayor cantidad de cancelaciones con <strong>${count} leads</strong> (${percentage}% del total cancelado).`
+          icon: 'clock',
+          iconColor: 'text-purple-400',
+          text: `Los servicios de <strong>${mejor.horas}</strong> tienen la mejor tasa de conversión con <strong>${mejor.tasa.toFixed(1)}%</strong> (${mejor.concretados} de ${mejor.total} leads concretados)${textoComparacion}.`
         });
       }
 
