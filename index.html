@@ -469,6 +469,7 @@
       const normalized = normalizeKey(val);
       if (normalized === 'concretado') return 'Concretado';
       if (normalized === 'sin respuesta' || normalized === 'sin_respuesta') return 'Sin respuesta';
+      if (normalized === 'fuera de presupuesto' || normalized === 'fuera_de_presupuesto') return 'Fuera de Presupuesto';
       return 'Cancelado';
     }
 
@@ -881,10 +882,11 @@
       const ctx = document.getElementById('statusChart');
       const isDark = document.documentElement.classList.contains('dark');
 
-      const statusOrder = ['Concretado', 'Cancelado', 'Sin respuesta'];
+      const statusOrder = ['Concretado', 'Cancelado', 'Fuera de Presupuesto', 'Sin respuesta'];
       const statusCounts = {
         'Concretado': 0,
         'Cancelado': 0,
+        'Fuera de Presupuesto': 0,
         'Sin respuesta': 0
       };
 
@@ -899,6 +901,7 @@
       const baseColors = {
         'Concretado': { start: '#34d399', end: '#059669' },
         'Cancelado': { start: '#f87171', end: '#dc2626' },
+        'Fuera de Presupuesto': { start: '#fb923c', end: '#ea580c' },
         'Sin respuesta': { start: '#fbbf24', end: '#d97706' }
       };
 
@@ -921,7 +924,7 @@
             backgroundColor: gradients,
             borderRadius: 12,
             borderSkipped: false,
-            barThickness: 80
+            barThickness: 60
           }]
         },
         options: {
@@ -1046,8 +1049,19 @@
         const percentage = totalCancelados > 0 ? ((count / totalCancelados) * 100).toFixed(1) : 0;
         insights.push({
           icon: 'alert-triangle',
-          iconColor: 'text-orange-400',
+          iconColor: 'text-red-400',
           text: `La fase <strong>${fase}</strong> concentra la mayor cantidad de cancelaciones con <strong>${count} leads</strong> (${percentage}% del total cancelado).`
+        });
+      }
+
+      // Insight sobre Fuera de Presupuesto
+      const fueraPresupuesto = filteredData.filter(d => d.estatus === 'Fuera de Presupuesto').length;
+      if (fueraPresupuesto > 0) {
+        const percentagePresupuesto = ((fueraPresupuesto / filteredData.length) * 100).toFixed(1);
+        insights.push({
+          icon: 'dollar-sign',
+          iconColor: 'text-orange-400',
+          text: `<strong>${fueraPresupuesto} leads</strong> (${percentagePresupuesto}%) se perdieron por estar fuera de presupuesto. Considera ajustar tu estrategia de precios o crear opciones más accesibles.`
         });
       }
 
