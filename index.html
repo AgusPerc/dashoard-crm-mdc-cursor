@@ -125,7 +125,7 @@
 <body class="min-h-screen antialiased overflow-x-hidden text-gray-900 dark:text-white">
 
   <!-- Background Layer -->
-  <div id="bgLayer" class="fixed inset-0 -z-50 bg-white dark:bg-black transition-colors duration-300"></div>
+  <div id="bgLayer" class="fixed inset-0 -z-50 transition-colors duration-300" style="background-color: #0a0a0a;"></div>
 
   <!-- Quick Period Filters -->
   <div class="flex flex-wrap justify-center gap-3 pt-8 px-4 text-sm font-medium animate-fade-in relative z-10">
@@ -360,22 +360,32 @@
     // ============================================================================
     function initTheme() {
       const savedTheme = localStorage.getItem('theme') || 'dark';
+      const bgLayer = document.getElementById('bgLayer');
       if (savedTheme === 'light') {
         document.documentElement.classList.remove('dark');
+        if (bgLayer) bgLayer.style.backgroundColor = '#ffffff';
       } else {
         document.documentElement.classList.add('dark');
+        if (bgLayer) bgLayer.style.backgroundColor = '#0a0a0a';
       }
     }
 
     function toggleTheme() {
       const html = document.documentElement;
+      const bgLayer = document.getElementById('bgLayer');
+
       if (html.classList.contains('dark')) {
+        // Cambiar a modo claro
         html.classList.remove('dark');
+        if (bgLayer) bgLayer.style.backgroundColor = '#ffffff';
         localStorage.setItem('theme', 'light');
       } else {
+        // Cambiar a modo oscuro
         html.classList.add('dark');
+        if (bgLayer) bgLayer.style.backgroundColor = '#0a0a0a';
         localStorage.setItem('theme', 'dark');
       }
+
       // Recreate charts and insights with new colors
       if (charts.channel) {
         updateChannelChart();
