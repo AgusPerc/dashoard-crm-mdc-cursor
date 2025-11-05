@@ -16,13 +16,6 @@
     /* Body backgrounds and text colors */
     body {
       font-family: 'Inter', sans-serif;
-      background: #0a0a0a;
-      color: #ffffff;
-    }
-
-    html:not(.dark) body {
-      background: linear-gradient(to bottom right, #ffffff, #f9fafb, #f5f5f5);
-      color: #111827;
     }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -52,7 +45,6 @@
       background: rgba(30, 30, 30, 0.6);
       border: 1px solid rgba(255, 255, 255, 0.2);
       transition: all 0.3s ease;
-      color: #ffffff;
     }
 
     .glass-input:focus-within {
@@ -118,7 +110,6 @@
     html:not(.dark) .glass-input {
       background: rgba(255, 255, 255, 0.8);
       border: 1px solid rgba(0, 0, 0, 0.2);
-      color: #1e293b;
     }
 
     html:not(.dark) .icon-container {
@@ -131,7 +122,7 @@
     }
   </style>
 </head>
-<body class="min-h-screen antialiased overflow-x-hidden">
+<body class="min-h-screen antialiased overflow-x-hidden text-gray-900 dark:text-white">
 
   <!-- Background Static Gradient -->
   <div class="fixed inset-0 -z-20 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:bg-[#0a0a0a]">
@@ -139,11 +130,11 @@
 
   <!-- Quick Period Filters -->
   <div class="flex flex-wrap justify-center gap-3 pt-8 px-4 text-sm font-medium animate-fade-in relative z-10">
-    <button id="periodToday" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300">Hoy</button>
-    <button id="period7Days" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300">Últimos 7 días</button>
-    <button id="period30Days" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300">Últimos 30 días</button>
-    <button id="periodThisMonth" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300">Este mes</button>
-    <button id="periodAll" class="period-filter px-5 py-2.5 rounded-full backdrop-blur-sm border border-blue-500/40 bg-blue-600/30 text-blue-100 dark:text-blue-100 hover:scale-105 hover:bg-blue-600/40 transition-all duration-300">Todo</button>
+    <button id="periodToday" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300 text-gray-900 dark:text-white">Hoy</button>
+    <button id="period7Days" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300 text-gray-900 dark:text-white">Últimos 7 días</button>
+    <button id="period30Days" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300 text-gray-900 dark:text-white">Últimos 30 días</button>
+    <button id="periodThisMonth" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300 text-gray-900 dark:text-white">Este mes</button>
+    <button id="periodAll" class="period-filter px-5 py-2.5 rounded-full backdrop-blur-sm border border-blue-500/40 bg-blue-600/30 text-white hover:scale-105 hover:bg-blue-600/40 transition-all duration-300">Todo</button>
   </div>
 
   <!-- Main Container -->
@@ -211,11 +202,11 @@
             <div class="space-y-3">
               <div>
                 <label class="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1 block">Desde</label>
-                <input type="date" id="dateFromInput" class="glass-input w-full px-3 py-2 text-sm rounded-lg outline-none">
+                <input type="date" id="dateFromInput" class="glass-input w-full px-3 py-2 text-sm rounded-lg outline-none text-gray-900 dark:text-white">
               </div>
               <div>
                 <label class="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1 block">Hasta</label>
-                <input type="date" id="dateToInput" class="glass-input w-full px-3 py-2 text-sm rounded-lg outline-none">
+                <input type="date" id="dateToInput" class="glass-input w-full px-3 py-2 text-sm rounded-lg outline-none text-gray-900 dark:text-white">
               </div>
             </div>
           </div>
