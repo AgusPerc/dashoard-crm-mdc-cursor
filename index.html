@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full">
+<html lang="es" class="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard CRM Interactivo</title>
+  <title>Dashboard CRM — Analytics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,173 +12,305 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-</head>
-<body class="min-h-full antialiased bg-stone-100 text-stone-900" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system;">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
 
-  <!-- Header -->
-  <header class="bg-white border-b border-stone-200">
-    <div class="max-w-[1800px] mx-auto px-6 py-5">
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-semibold tracking-tight text-stone-900">Dashboard CRM</h1>
-          <p class="text-sm text-stone-500 mt-0.5">Análisis de leads y conversiones</p>
+    /* Glass Morphism Effects */
+    .glass-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.03) inset, 0 20px 40px rgba(0, 0, 0, 0.6);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.08) inset, 0 30px 60px rgba(0, 0, 0, 0.7);
+      border-color: rgba(255, 255, 255, 0.15);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+    }
+
+    .glass-sidebar {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(60px) saturate(160%);
+      -webkit-backdrop-filter: blur(60px) saturate(160%);
+      border-right: 0.5px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-input {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 0.5px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .glass-input:focus-within {
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+    }
+
+    .icon-container {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 0.5px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .icon-container:hover {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.12) 100%);
+      transform: scale(1.05);
+    }
+
+    /* Animations */
+    @keyframes fade-in {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes slide-up {
+      0% { opacity: 0; transform: translateY(30px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes slide-in-left {
+      0% { opacity: 0; transform: translateX(-40px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slide-in-right {
+      0% { opacity: 0; transform: translateX(40px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    .animate-fade-in { animation: fade-in 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+    .animate-slide-up { animation: slide-up 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+    .animate-slide-left { animation: slide-in-left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+    .animate-slide-right { animation: slide-in-right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+    /* Light mode overrides */
+    html:not(.dark) .glass-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+      border: 0.5px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.03) inset, 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    html:not(.dark) .glass-card:hover {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+      box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.05) inset, 0 30px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    html:not(.dark) .glass-sidebar {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
+      border-right: 0.5px solid rgba(0, 0, 0, 0.1);
+    }
+
+    html:not(.dark) ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 dark:from-gray-900 dark:via-slate-900 dark:to-gray-800 bg-stone-50 text-white dark:text-white text-stone-900 antialiased overflow-x-hidden">
+
+  <!-- Background Static Gradient -->
+  <div class="fixed inset-0 -z-20">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-900/50 via-slate-900/60 to-gray-800/70 dark:from-gray-900/50 dark:via-slate-900/60 dark:to-gray-800/70 from-stone-100/50 via-stone-200/60 to-stone-300/70"></div>
+    <div class="absolute inset-0 opacity-30">
+      <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-1/3 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
+    </div>
+  </div>
+
+  <!-- Quick Period Filters -->
+  <div class="flex flex-wrap justify-center gap-3 pt-8 px-4 text-sm font-medium animate-fade-in relative z-10">
+    <button id="periodToday" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300">Hoy</button>
+    <button id="period7Days" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300">Últimos 7 días</button>
+    <button id="period30Days" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300">Últimos 30 días</button>
+    <button id="periodThisMonth" class="period-filter px-5 py-2.5 rounded-full glass-card hover:scale-105 transition-transform duration-300">Este mes</button>
+    <button id="periodAll" class="period-filter px-5 py-2.5 rounded-full backdrop-blur-sm border border-blue-500/30 bg-blue-600/20 text-blue-200 dark:text-blue-200 text-blue-600 hover:scale-105 hover:bg-blue-600/30 transition-all duration-300">Todo</button>
+  </div>
+
+  <!-- Main Container -->
+  <div class="max-w-[1800px] mx-auto px-6 py-8">
+    <!-- Header -->
+    <header class="mb-8 flex items-center justify-between animate-slide-up">
+      <div class="flex items-center gap-4">
+        <div class="icon-container p-3 rounded-xl">
+          <i data-lucide="bar-chart-3" class="w-8 h-8 text-blue-400"></i>
         </div>
-        <div class="flex items-center gap-3">
-          <button id="clearFiltersBtn" class="hidden px-4 py-2 text-sm font-medium text-stone-600 bg-stone-100 rounded-xl hover:bg-stone-200 transition-colors" aria-label="Limpiar filtros">
-            <span class="flex items-center gap-2">
-              <i data-lucide="x" class="w-4 h-4"></i>
-              Limpiar filtros
-            </span>
-          </button>
-          <label for="csvFileInput" class="cursor-pointer px-4 py-2 text-sm font-medium text-white bg-stone-900 rounded-xl hover:bg-stone-800 transition-colors">
-            <span class="flex items-center gap-2">
-              <i data-lucide="upload" class="w-4 h-4"></i>
-              Cargar CSV
-            </span>
-          </label>
-          <input type="file" id="csvFileInput" accept=".csv" class="hidden" aria-label="Cargar archivo CSV">
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight">Dashboard CRM</h1>
+          <p class="text-sm text-gray-400 dark:text-gray-400 text-stone-600 mt-0.5">Análisis de leads y conversiones en tiempo real</p>
         </div>
       </div>
-    </div>
-  </header>
+      <div class="flex items-center gap-3">
+        <button id="themeToggle" class="glass-card p-3 rounded-xl hover:scale-105 transition-all duration-200" aria-label="Cambiar tema">
+          <i data-lucide="moon" class="w-5 h-5 dark-icon hidden dark:block"></i>
+          <i data-lucide="sun" class="w-5 h-5 light-icon block dark:hidden text-stone-700"></i>
+        </button>
+        <button id="clearFiltersBtn" class="hidden glass-card px-4 py-2.5 rounded-xl text-sm font-medium hover:scale-105 transition-all duration-200" aria-label="Limpiar filtros">
+          <span class="flex items-center gap-2">
+            <i data-lucide="x" class="w-4 h-4"></i>
+            Limpiar filtros
+          </span>
+        </button>
+        <label for="csvFileInput" class="cursor-pointer px-4 py-2.5 text-sm font-medium bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl hover:scale-105 transition-all duration-200 shadow-lg text-white">
+          <span class="flex items-center gap-2">
+            <i data-lucide="upload" class="w-4 h-4"></i>
+            Cargar CSV
+          </span>
+        </label>
+        <input type="file" id="csvFileInput" accept=".csv" class="hidden" aria-label="Cargar archivo CSV">
+      </div>
+    </header>
 
-  <div class="max-w-[1800px] mx-auto px-6 py-6">
+    <!-- Main Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- Left Sidebar - Filters -->
-      <aside class="lg:col-span-3 space-y-5">
+      <!-- Sidebar Filters -->
+      <aside class="lg:col-span-3 space-y-5 animate-slide-left">
+
         <!-- Upload Zone -->
-        <div id="uploadZone" class="relative border-2 border-dashed border-stone-300 rounded-2xl p-8 text-center bg-white hover:border-stone-400 hover:bg-stone-50 transition-all cursor-pointer">
+        <div id="uploadZone" class="relative glass-card rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 hover:scale-[1.02]">
           <div class="flex flex-col items-center gap-3">
-            <div class="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center">
-              <i data-lucide="file-up" class="w-8 h-8 text-stone-400"></i>
+            <div class="icon-container w-16 h-16 rounded-full flex items-center justify-center">
+              <i data-lucide="file-up" class="w-8 h-8 text-blue-400"></i>
             </div>
             <div>
-              <p class="text-sm font-medium text-stone-700">Arrastra tu CSV aquí</p>
-              <p class="text-xs text-stone-500 mt-1">o haz clic para seleccionar</p>
+              <p class="text-sm font-medium">Arrastra tu CSV aquí</p>
+              <p class="text-xs text-gray-400 dark:text-gray-400 text-stone-600 mt-1">o haz clic para seleccionar</p>
             </div>
           </div>
         </div>
 
         <!-- Filters Panel -->
         <div id="filtersPanel" class="hidden space-y-4">
+
           <!-- Date Range Filter -->
-          <div class="bg-white rounded-2xl p-5 shadow-sm ring-1 ring-stone-200">
-            <h3 class="text-sm font-semibold text-stone-900 mb-3 flex items-center gap-2">
-              <i data-lucide="calendar" class="w-4 h-4"></i>
+          <div class="glass-card rounded-2xl p-5">
+            <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-blue-400"></i>
               Rango de fechas
             </h3>
             <div class="space-y-3">
               <div>
-                <label class="text-xs text-stone-500 mb-1 block">Desde</label>
-                <input type="date" id="dateFromInput" class="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900 focus:border-transparent">
+                <label class="text-xs text-gray-400 dark:text-gray-400 text-stone-600 mb-1 block">Desde</label>
+                <input type="date" id="dateFromInput" class="glass-input w-full px-3 py-2 text-sm rounded-lg outline-none">
               </div>
               <div>
-                <label class="text-xs text-stone-500 mb-1 block">Hasta</label>
-                <input type="date" id="dateToInput" class="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:ring-2 focus:ring-stone-900 focus:border-transparent">
+                <label class="text-xs text-gray-400 dark:text-gray-400 text-stone-600 mb-1 block">Hasta</label>
+                <input type="date" id="dateToInput" class="glass-input w-full px-3 py-2 text-sm rounded-lg outline-none">
               </div>
             </div>
           </div>
 
           <!-- Canal Filter -->
-          <div class="bg-white rounded-2xl p-5 shadow-sm ring-1 ring-stone-200">
-            <h3 class="text-sm font-semibold text-stone-900 mb-3 flex items-center gap-2">
-              <i data-lucide="radio" class="w-4 h-4"></i>
+          <div class="glass-card rounded-2xl p-5">
+            <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+              <i data-lucide="radio" class="w-4 h-4 text-purple-400"></i>
               Canal de adquisición
             </h3>
             <div id="canalFilterList" class="flex flex-wrap gap-2"></div>
           </div>
 
           <!-- Fase Filter -->
-          <div class="bg-white rounded-2xl p-5 shadow-sm ring-1 ring-stone-200">
-            <h3 class="text-sm font-semibold text-stone-900 mb-3 flex items-center gap-2">
-              <i data-lucide="layers" class="w-4 h-4"></i>
+          <div class="glass-card rounded-2xl p-5">
+            <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+              <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i>
               Fase
             </h3>
             <div id="faseFilterList" class="flex flex-wrap gap-2"></div>
           </div>
 
           <!-- Comercial Filter -->
-          <div class="bg-white rounded-2xl p-5 shadow-sm ring-1 ring-stone-200">
-            <h3 class="text-sm font-semibold text-stone-900 mb-3 flex items-center gap-2">
-              <i data-lucide="user" class="w-4 h-4"></i>
+          <div class="glass-card rounded-2xl p-5">
+            <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+              <i data-lucide="user" class="w-4 h-4 text-amber-400"></i>
               Comercial
             </h3>
             <div id="comercialFilterList" class="flex flex-wrap gap-2"></div>
           </div>
+
         </div>
       </aside>
 
       <!-- Main Content -->
-      <main class="lg:col-span-9 space-y-6">
+      <main class="lg:col-span-9 space-y-6 animate-slide-right">
+
         <!-- Empty State -->
-        <div id="emptyState" class="bg-white rounded-3xl p-12 text-center shadow-sm ring-1 ring-stone-200">
+        <div id="emptyState" class="glass-card rounded-3xl p-12 text-center">
           <div class="flex flex-col items-center gap-4">
-            <div class="w-20 h-20 rounded-full bg-stone-100 flex items-center justify-center">
-              <i data-lucide="database" class="w-10 h-10 text-stone-400"></i>
+            <div class="icon-container w-20 h-20 rounded-full flex items-center justify-center">
+              <i data-lucide="database" class="w-10 h-10 text-blue-400"></i>
             </div>
             <div>
-              <h2 class="text-xl font-semibold text-stone-900">No hay datos cargados</h2>
-              <p class="text-sm text-stone-500 mt-2">Carga un archivo CSV para comenzar a visualizar tus datos</p>
+              <h2 class="text-2xl font-bold">No hay datos cargados</h2>
+              <p class="text-sm text-gray-400 dark:text-gray-400 text-stone-600 mt-2">Carga un archivo CSV para comenzar a visualizar tus datos</p>
             </div>
           </div>
         </div>
 
-        <!-- Dashboard Content (hidden initially) -->
+        <!-- Dashboard Content -->
         <div id="dashboardContent" class="hidden space-y-6">
+
           <!-- KPI Cards -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
             <!-- Total Leads -->
-            <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl p-6 text-white shadow-lg">
-              <div class="flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-medium text-indigo-100">Total Leads</p>
-                  <p id="kpiTotalLeads" class="text-4xl font-bold mt-2 tabular-nums">0</p>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                  <i data-lucide="users" class="w-6 h-6"></i>
+            <div class="glass-card rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-300">
+              <div class="flex items-start justify-between mb-4">
+                <div class="icon-container p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                  <i data-lucide="users" class="w-6 h-6 text-indigo-400"></i>
                 </div>
               </div>
+              <p class="text-sm text-gray-400 dark:text-gray-400 text-stone-600 mb-1">Total Leads</p>
+              <p id="kpiTotalLeads" class="text-4xl font-bold tabular-nums">0</p>
             </div>
 
-            <!-- % Concretados -->
-            <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg">
-              <div class="flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-medium text-emerald-100">Tasa de Conversión</p>
-                  <p id="kpiConversionRate" class="text-4xl font-bold mt-2 tabular-nums">0%</p>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                  <i data-lucide="trending-up" class="w-6 h-6"></i>
+            <!-- Tasa de Conversión -->
+            <div class="glass-card rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-300">
+              <div class="flex items-start justify-between mb-4">
+                <div class="icon-container p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                  <i data-lucide="trending-up" class="w-6 h-6 text-emerald-400"></i>
                 </div>
               </div>
+              <p class="text-sm text-gray-400 dark:text-gray-400 text-stone-600 mb-1">Tasa de Conversión</p>
+              <p id="kpiConversionRate" class="text-4xl font-bold tabular-nums">0%</p>
             </div>
 
-            <!-- Leads por día promedio -->
-            <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-6 text-white shadow-lg">
-              <div class="flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-medium text-amber-100">Promedio por Día</p>
-                  <p id="kpiAvgPerDay" class="text-4xl font-bold mt-2 tabular-nums">0</p>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                  <i data-lucide="calendar-days" class="w-6 h-6"></i>
+            <!-- Promedio por Día -->
+            <div class="glass-card rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-300">
+              <div class="flex items-start justify-between mb-4">
+                <div class="icon-container p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                  <i data-lucide="calendar-days" class="w-6 h-6 text-amber-400"></i>
                 </div>
               </div>
+              <p class="text-sm text-gray-400 dark:text-gray-400 text-stone-600 mb-1">Promedio por Día</p>
+              <p id="kpiAvgPerDay" class="text-4xl font-bold tabular-nums">0</p>
             </div>
+
           </div>
 
           <!-- Charts Row -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
             <!-- Channel Donut Chart -->
-            <div class="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-stone-200">
+            <div class="glass-card rounded-2xl p-6">
               <div class="flex items-center justify-between mb-5">
                 <div>
-                  <h2 class="text-lg font-semibold text-stone-900">Leads por Canal</h2>
-                  <p class="text-sm text-stone-500 mt-0.5">Distribución por origen</p>
+                  <h2 class="text-lg font-semibold">Leads por Canal</h2>
+                  <p class="text-sm text-gray-400 dark:text-gray-400 text-stone-600 mt-0.5">Distribución por origen</p>
                 </div>
-                <div class="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center">
-                  <i data-lucide="pie-chart" class="w-5 h-5 text-stone-600"></i>
+                <div class="icon-container p-2.5 rounded-lg">
+                  <i data-lucide="pie-chart" class="w-5 h-5 text-purple-400"></i>
                 </div>
               </div>
               <div class="relative h-80">
@@ -187,35 +319,37 @@
             </div>
 
             <!-- Status Bar Chart -->
-            <div class="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-stone-200">
+            <div class="glass-card rounded-2xl p-6">
               <div class="flex items-center justify-between mb-5">
                 <div>
-                  <h2 class="text-lg font-semibold text-stone-900">Leads por Estatus</h2>
-                  <p class="text-sm text-stone-500 mt-0.5">Resultado de gestión</p>
+                  <h2 class="text-lg font-semibold">Leads por Estatus</h2>
+                  <p class="text-sm text-gray-400 dark:text-gray-400 text-stone-600 mt-0.5">Resultado de gestión</p>
                 </div>
-                <div class="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center">
-                  <i data-lucide="bar-chart-3" class="w-5 h-5 text-stone-600"></i>
+                <div class="icon-container p-2.5 rounded-lg">
+                  <i data-lucide="bar-chart-3" class="w-5 h-5 text-blue-400"></i>
                 </div>
               </div>
               <div class="relative h-80">
                 <canvas id="statusChart"></canvas>
               </div>
             </div>
+
           </div>
 
           <!-- Insights Section -->
-          <div class="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-stone-200">
-            <div class="flex items-center gap-2 mb-4">
-              <div class="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center">
-                <i data-lucide="lightbulb" class="w-5 h-5 text-stone-600"></i>
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center gap-3 mb-5">
+              <div class="icon-container p-2.5 rounded-lg">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-yellow-400"></i>
               </div>
               <div>
-                <h2 class="text-lg font-semibold text-stone-900">Insights</h2>
-                <p class="text-sm text-stone-500">Análisis inteligente de tus datos</p>
+                <h2 class="text-lg font-semibold">Insights</h2>
+                <p class="text-sm text-gray-400 dark:text-gray-400 text-stone-600">Análisis inteligente de tus datos</p>
               </div>
             </div>
             <ul id="insightsList" class="space-y-3"></ul>
           </div>
+
         </div>
       </main>
 
@@ -223,6 +357,34 @@
   </div>
 
   <script>
+    // ============================================================================
+    // THEME MANAGEMENT
+    // ============================================================================
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+      // Recreate charts with new colors
+      if (charts.channel) {
+        updateChannelChart();
+        updateStatusChart();
+      }
+    }
+
     // ============================================================================
     // GLOBAL STATE & UTILITIES
     // ============================================================================
@@ -240,7 +402,6 @@
       status: null
     };
 
-    // Normalize string for comparison (lowercase, no accents)
     function normalizeKey(str) {
       if (!str) return '';
       return str.toLowerCase()
@@ -249,7 +410,6 @@
         .trim();
     }
 
-    // Detect column by multiple possible names
     function detectColumn(headers, candidates) {
       const normalized = headers.map(h => normalizeKey(h));
       for (const candidate of candidates) {
@@ -259,12 +419,10 @@
       return null;
     }
 
-    // Parse date flexibly (DD/MM/YY, DD/MM/YYYY, YYYY-MM-DD, MM/DD/YYYY)
     function parseDateFlexible(val) {
       if (!val) return null;
       const str = String(val).trim();
 
-      // Try DD/MM/YY or DD/MM/YYYY
       let match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
       if (match) {
         let [, d, m, y] = match;
@@ -273,7 +431,6 @@
         if (!isNaN(date)) return date;
       }
 
-      // Try YYYY-MM-DD
       match = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
       if (match) {
         const [, y, m, d] = match;
@@ -281,7 +438,6 @@
         if (!isNaN(date)) return date;
       }
 
-      // Try MM/DD/YYYY
       match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
       if (match) {
         const [, m, d, y] = match;
@@ -292,19 +448,14 @@
       return null;
     }
 
-    // Normalize status to standard categories
     function normalizeStatus(val) {
       if (!val) return 'Sin respuesta';
       const normalized = normalizeKey(val);
-
       if (normalized === 'concretado') return 'Concretado';
       if (normalized === 'sin respuesta' || normalized === 'sin_respuesta') return 'Sin respuesta';
-
-      // Everything else maps to Cancelado
       return 'Cancelado';
     }
 
-    // Format date as YYYY-MM-DD for input[type=date]
     function formatDateForInput(date) {
       if (!date) return '';
       const y = date.getFullYear();
@@ -313,24 +464,20 @@
       return `${y}-${m}-${d}`;
     }
 
-    // Animate number counter
     function animateNumber(element, target, duration = 800) {
       const start = 0;
       const startTime = performance.now();
-
       function update(currentTime) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const current = Math.floor(start + (target - start) * progress);
         element.textContent = current;
-
         if (progress < 1) {
           requestAnimationFrame(update);
         } else {
           element.textContent = target;
         }
       }
-
       requestAnimationFrame(update);
     }
 
@@ -339,12 +486,11 @@
     // ============================================================================
     function handleFileUpload(file) {
       if (!file) return;
-
       Papa.parse(file, {
-        header: true,
+        header: false,
         skipEmptyLines: true,
         complete: function(results) {
-          processCSVData(results.data, results.meta.fields);
+          findHeadersAndProcess(results.data);
         },
         error: function(error) {
           alert('Error al procesar el archivo CSV: ' + error.message);
@@ -352,15 +498,55 @@
       });
     }
 
+    function findHeadersAndProcess(rows) {
+      if (rows.length < 2) {
+        alert('❌ El archivo CSV no tiene suficientes datos');
+        return;
+      }
+
+      let headerRowIndex = -1;
+      const headerKeywords = ['fecha', 'fase', 'canal', 'comercial', 'como supo', 'motivo'];
+
+      for (let i = 0; i < Math.min(5, rows.length); i++) {
+        const row = rows[i];
+        const rowText = row.join(' ').toLowerCase();
+        const matchCount = headerKeywords.filter(keyword => rowText.includes(keyword)).length;
+        if (matchCount >= 3) {
+          headerRowIndex = i;
+          break;
+        }
+      }
+
+      if (headerRowIndex === -1) {
+        alert('❌ No se pudo detectar la fila de encabezados. Asegúrate de que el CSV contenga columnas como: Fecha, Fase, Canal, Comercial, Motivo.');
+        return;
+      }
+
+      const headers = rows[headerRowIndex].map(h => (h || '').trim());
+      const dataRows = rows.slice(headerRowIndex + 1);
+
+      const data = dataRows
+        .map(row => {
+          const obj = {};
+          headers.forEach((header, idx) => {
+            obj[header] = row[idx] || '';
+          });
+          return obj;
+        })
+        .filter(row => {
+          return Object.values(row).some(val => val.trim() !== '');
+        });
+
+      processCSVData(data, headers);
+    }
+
     function processCSVData(data, headers) {
-      // Detect required columns
       const colFecha = detectColumn(headers, ['fecha', 'created_at', 'fecha_creacion', 'date']);
       const colCanal = detectColumn(headers, ['canal', 'canal_de_adquisicion', 'como_supo_de_nosotros', 'como supo de nosotros', 'source', 'origen']);
       const colFase = detectColumn(headers, ['fase', 'stage', 'etapa']);
       const colComercial = detectColumn(headers, ['comercial', 'vendedor', 'owner', 'ejecutivo']);
       const colEstatus = detectColumn(headers, ['motivo por que no se concreto', 'motivo_por_que_no_se_concreto', 'estatus', 'status', 'estado']);
 
-      // Validate required columns
       if (!colFecha || !colCanal || !colFase || !colComercial || !colEstatus) {
         const missing = [];
         if (!colFecha) missing.push('Fecha');
@@ -368,17 +554,14 @@
         if (!colFase) missing.push('Fase');
         if (!colComercial) missing.push('Comercial');
         if (!colEstatus) missing.push('Estatus/Motivo');
-
-        alert(`❌ Faltan columnas requeridas:\n\n${missing.join('\n')}\n\nColumnas detectadas:\n${headers.join(', ')}`);
+        alert(`❌ Faltan columnas requeridas:\n\n${missing.join('\n')}\n\nColumnas detectadas:\n${headers.filter(h => h).join(', ')}`);
         return;
       }
 
-      // Parse and clean data
       allData = data
         .map(row => {
           const fecha = parseDateFlexible(row[colFecha]);
           if (!fecha) return null;
-
           return {
             fecha: fecha,
             canal: (row[colCanal] || '').trim() || 'Sin especificar',
@@ -394,7 +577,6 @@
         return;
       }
 
-      // Initialize filters and dashboard
       initializeFilters();
       applyFilters();
       showDashboard();
@@ -404,7 +586,6 @@
     // FILTER MANAGEMENT
     // ============================================================================
     function initializeFilters() {
-      // Reset filters
       currentFilters = {
         canales: new Set(),
         fases: new Set(),
@@ -413,17 +594,14 @@
         dateTo: null
       };
 
-      // Get unique values
       const canales = [...new Set(allData.map(d => d.canal))].sort();
       const fases = [...new Set(allData.map(d => d.fase))].sort();
       const comerciales = [...new Set(allData.map(d => d.comercial))].sort();
 
-      // Render filter chips
       renderFilterChips('canalFilterList', canales, 'canales');
       renderFilterChips('faseFilterList', fases, 'fases');
       renderFilterChips('comercialFilterList', comerciales, 'comerciales');
 
-      // Set date range to full data range
       const dates = allData.map(d => d.fecha).sort((a, b) => a - b);
       const minDate = dates[0];
       const maxDate = dates[dates.length - 1];
@@ -439,8 +617,7 @@
       const container = document.getElementById(containerId);
       container.innerHTML = values.map(value => `
         <button
-          class="filter-chip px-3 py-1.5 text-xs font-medium rounded-lg border-2 transition-all
-                 border-stone-300 text-stone-700 hover:border-stone-400 hover:bg-stone-50"
+          class="filter-chip px-3 py-1.5 text-xs font-medium rounded-lg border-2 transition-all glass-card"
           data-filter="${filterKey}"
           data-value="${value}"
           aria-label="Filtrar por ${value}"
@@ -449,7 +626,6 @@
         </button>
       `).join('');
 
-      // Add click handlers
       container.querySelectorAll('.filter-chip').forEach(chip => {
         chip.addEventListener('click', () => toggleFilterChip(chip));
       });
@@ -461,12 +637,12 @@
 
       if (currentFilters[filterKey].has(value)) {
         currentFilters[filterKey].delete(value);
-        chip.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-700');
-        chip.classList.add('border-stone-300', 'text-stone-700');
+        chip.style.background = '';
+        chip.style.borderColor = '';
       } else {
         currentFilters[filterKey].add(value);
-        chip.classList.remove('border-stone-300', 'text-stone-700');
-        chip.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-700');
+        chip.style.background = 'linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3))';
+        chip.style.borderColor = 'rgba(99, 102, 241, 0.5)';
       }
 
       applyFilters();
@@ -475,29 +651,11 @@
 
     function applyFilters() {
       filteredData = allData.filter(row => {
-        // Canal filter
-        if (currentFilters.canales.size > 0 && !currentFilters.canales.has(row.canal)) {
-          return false;
-        }
-
-        // Fase filter
-        if (currentFilters.fases.size > 0 && !currentFilters.fases.has(row.fase)) {
-          return false;
-        }
-
-        // Comercial filter
-        if (currentFilters.comerciales.size > 0 && !currentFilters.comerciales.has(row.comercial)) {
-          return false;
-        }
-
-        // Date range filter
-        if (currentFilters.dateFrom && row.fecha < currentFilters.dateFrom) {
-          return false;
-        }
-        if (currentFilters.dateTo && row.fecha > currentFilters.dateTo) {
-          return false;
-        }
-
+        if (currentFilters.canales.size > 0 && !currentFilters.canales.has(row.canal)) return false;
+        if (currentFilters.fases.size > 0 && !currentFilters.fases.has(row.fase)) return false;
+        if (currentFilters.comerciales.size > 0 && !currentFilters.comerciales.has(row.comercial)) return false;
+        if (currentFilters.dateFrom && row.fecha < currentFilters.dateFrom) return false;
+        if (currentFilters.dateTo && row.fecha > currentFilters.dateTo) return false;
         return true;
       });
 
@@ -505,12 +663,10 @@
     }
 
     function clearAllFilters() {
-      // Clear all filter sets
       currentFilters.canales.clear();
       currentFilters.fases.clear();
       currentFilters.comerciales.clear();
 
-      // Reset date range
       const dates = allData.map(d => d.fecha).sort((a, b) => a - b);
       currentFilters.dateFrom = dates[0];
       currentFilters.dateTo = dates[dates.length - 1];
@@ -518,11 +674,16 @@
       document.getElementById('dateFromInput').value = formatDateForInput(currentFilters.dateFrom);
       document.getElementById('dateToInput').value = formatDateForInput(currentFilters.dateTo);
 
-      // Reset chip styles
       document.querySelectorAll('.filter-chip').forEach(chip => {
-        chip.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-700');
-        chip.classList.add('border-stone-300', 'text-stone-700');
+        chip.style.background = '';
+        chip.style.borderColor = '';
       });
+
+      // Reset period filters
+      document.querySelectorAll('.period-filter').forEach(btn => {
+        btn.classList.remove('border-blue-500/30', 'bg-blue-600/20', 'text-blue-200', 'text-blue-600');
+      });
+      document.getElementById('periodAll').classList.add('border-blue-500/30', 'bg-blue-600/20', 'text-blue-200');
 
       applyFilters();
       updateClearButtonVisibility();
@@ -543,6 +704,56 @@
     }
 
     // ============================================================================
+    // PERIOD FILTERS
+    // ============================================================================
+    function applyPeriodFilter(period) {
+      if (allData.length === 0) return;
+
+      const now = new Date();
+      now.setHours(23, 59, 59, 999);
+      let fromDate;
+
+      switch(period) {
+        case 'today':
+          fromDate = new Date(now);
+          fromDate.setHours(0, 0, 0, 0);
+          break;
+        case '7days':
+          fromDate = new Date(now);
+          fromDate.setDate(fromDate.getDate() - 7);
+          fromDate.setHours(0, 0, 0, 0);
+          break;
+        case '30days':
+          fromDate = new Date(now);
+          fromDate.setDate(fromDate.getDate() - 30);
+          fromDate.setHours(0, 0, 0, 0);
+          break;
+        case 'thisMonth':
+          fromDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          fromDate.setHours(0, 0, 0, 0);
+          break;
+        case 'all':
+          const dates = allData.map(d => d.fecha).sort((a, b) => a - b);
+          fromDate = dates[0];
+          break;
+      }
+
+      currentFilters.dateFrom = fromDate;
+      currentFilters.dateTo = now;
+
+      document.getElementById('dateFromInput').value = formatDateForInput(fromDate);
+      document.getElementById('dateToInput').value = formatDateForInput(now);
+
+      // Update button styles
+      document.querySelectorAll('.period-filter').forEach(btn => {
+        btn.classList.remove('border-blue-500/30', 'bg-blue-600/20', 'text-blue-200', 'text-blue-600');
+      });
+      event.target.classList.add('border-blue-500/30', 'bg-blue-600/20', 'text-blue-200');
+
+      applyFilters();
+    }
+
+    // ============================================================================
     // DASHBOARD UPDATE
     // ============================================================================
     function updateDashboard() {
@@ -557,7 +768,6 @@
       const concretados = filteredData.filter(d => d.estatus === 'Concretado').length;
       const conversionRate = total > 0 ? ((concretados / total) * 100).toFixed(1) : 0;
 
-      // Calculate average per day
       const dates = filteredData.map(d => d.fecha).sort((a, b) => a - b);
       let avgPerDay = 0;
       if (dates.length > 0) {
@@ -567,7 +777,6 @@
         avgPerDay = (total / daysDiff).toFixed(1);
       }
 
-      // Animate KPIs
       const totalEl = document.getElementById('kpiTotalLeads');
       const conversionEl = document.getElementById('kpiConversionRate');
       const avgEl = document.getElementById('kpiAvgPerDay');
@@ -579,33 +788,25 @@
 
     function updateChannelChart() {
       const ctx = document.getElementById('channelChart');
+      const isDark = document.documentElement.classList.contains('dark');
 
-      // Count by channel
       const channelCounts = {};
       filteredData.forEach(row => {
         channelCounts[row.canal] = (channelCounts[row.canal] || 0) + 1;
       });
 
-      // Sort by count descending
-      const sorted = Object.entries(channelCounts)
-        .sort((a, b) => b[1] - a[1]);
-
+      const sorted = Object.entries(channelCounts).sort((a, b) => b[1] - a[1]);
       const labels = sorted.map(([canal]) => canal);
       const data = sorted.map(([, count]) => count);
       const total = data.reduce((sum, val) => sum + val, 0);
 
-      // Color palette
       const colors = [
         '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981',
         '#3b82f6', '#ef4444', '#14b8a6', '#f97316', '#84cc16'
       ];
 
-      // Destroy previous chart
-      if (charts.channel) {
-        charts.channel.destroy();
-      }
+      if (charts.channel) charts.channel.destroy();
 
-      // Create donut chart
       charts.channel = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -614,7 +815,7 @@
             data: data,
             backgroundColor: colors.slice(0, labels.length),
             borderWidth: 2,
-            borderColor: '#ffffff'
+            borderColor: isDark ? '#1e293b' : '#ffffff'
           }]
         },
         options: {
@@ -626,13 +827,15 @@
               labels: {
                 padding: 15,
                 font: { size: 12, family: 'Inter' },
-                color: '#44403c'
+                color: isDark ? '#e2e8f0' : '#334155'
               }
             },
             tooltip: {
-              backgroundColor: '#1c1917',
-              titleColor: '#fff',
-              bodyColor: '#e7e5e4',
+              backgroundColor: isDark ? '#1e293b' : '#ffffff',
+              titleColor: isDark ? '#ffffff' : '#1e293b',
+              bodyColor: isDark ? '#e2e8f0' : '#334155',
+              borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+              borderWidth: 1,
               padding: 12,
               cornerRadius: 8,
               displayColors: true,
@@ -661,8 +864,8 @@
 
     function updateStatusChart() {
       const ctx = document.getElementById('statusChart');
+      const isDark = document.documentElement.classList.contains('dark');
 
-      // Count by status
       const statusOrder = ['Concretado', 'Cancelado', 'Sin respuesta'];
       const statusCounts = {
         'Concretado': 0,
@@ -677,19 +880,14 @@
       const labels = statusOrder;
       const data = statusOrder.map(status => statusCounts[status]);
 
-      // Colors matching status meaning
       const colors = {
         'Concretado': '#10b981',
         'Cancelado': '#ef4444',
         'Sin respuesta': '#f59e0b'
       };
 
-      // Destroy previous chart
-      if (charts.status) {
-        charts.status.destroy();
-      }
+      if (charts.status) charts.status.destroy();
 
-      // Create bar chart
       charts.status = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -706,14 +904,23 @@
           maintainAspectRatio: false,
           scales: {
             x: {
-              grid: { color: '#f5f5f4', drawBorder: false },
-              ticks: { color: '#78716c', font: { size: 12, family: 'Inter' } }
+              grid: {
+                color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                drawBorder: false
+              },
+              ticks: {
+                color: isDark ? '#94a3b8' : '#64748b',
+                font: { size: 12, family: 'Inter' }
+              }
             },
             y: {
               beginAtZero: true,
-              grid: { color: '#f5f5f4', drawBorder: false },
+              grid: {
+                color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                drawBorder: false
+              },
               ticks: {
-                color: '#78716c',
+                color: isDark ? '#94a3b8' : '#64748b',
                 font: { size: 12, family: 'Inter' },
                 precision: 0
               }
@@ -722,9 +929,11 @@
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: '#1c1917',
-              titleColor: '#fff',
-              bodyColor: '#e7e5e4',
+              backgroundColor: isDark ? '#1e293b' : '#ffffff',
+              titleColor: isDark ? '#ffffff' : '#1e293b',
+              bodyColor: isDark ? '#e2e8f0' : '#334155',
+              borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+              borderWidth: 1,
               padding: 12,
               cornerRadius: 8,
               displayColors: false,
@@ -744,14 +953,13 @@
 
     function renderInsights() {
       const insights = [];
+      const isDark = document.documentElement.classList.contains('dark');
 
-      // 1. Top canal by volume
       const channelCounts = {};
       filteredData.forEach(row => {
         channelCounts[row.canal] = (channelCounts[row.canal] || 0) + 1;
       });
-      const topChannel = Object.entries(channelCounts)
-        .sort((a, b) => b[1] - a[1])[0];
+      const topChannel = Object.entries(channelCounts).sort((a, b) => b[1] - a[1])[0];
 
       if (topChannel) {
         const [canal, count] = topChannel;
@@ -762,7 +970,6 @@
         });
       }
 
-      // 2. Conversion rate
       const concretados = filteredData.filter(d => d.estatus === 'Concretado').length;
       const conversionRate = filteredData.length > 0
         ? ((concretados / filteredData.length) * 100).toFixed(1)
@@ -772,7 +979,6 @@
         text: `La tasa de conversión actual es del <strong>${conversionRate}%</strong> con <strong>${concretados} leads concretados</strong> de ${filteredData.length} totales.`
       });
 
-      // 3. Top comercial by concretados
       const comercialStats = {};
       filteredData.forEach(row => {
         if (!comercialStats[row.comercial]) {
@@ -797,7 +1003,6 @@
         });
       }
 
-      // 4. Fase with most cancelados
       const faseCancelados = {};
       filteredData
         .filter(d => d.estatus === 'Cancelado')
@@ -805,8 +1010,7 @@
           faseCancelados[row.fase] = (faseCancelados[row.fase] || 0) + 1;
         });
 
-      const topFaseCancelado = Object.entries(faseCancelados)
-        .sort((a, b) => b[1] - a[1])[0];
+      const topFaseCancelado = Object.entries(faseCancelados).sort((a, b) => b[1] - a[1])[0];
 
       if (topFaseCancelado) {
         const [fase, count] = topFaseCancelado;
@@ -818,12 +1022,11 @@
         });
       }
 
-      // Render insights
       const container = document.getElementById('insightsList');
       container.innerHTML = insights.map(insight => `
-        <li class="flex gap-3 p-4 rounded-xl bg-stone-50 border border-stone-200">
+        <li class="flex gap-3 p-4 rounded-xl glass-card hover:scale-[1.01] transition-all duration-200">
           <span class="text-2xl flex-shrink-0">${insight.icon}</span>
-          <p class="text-sm text-stone-700 leading-relaxed">${insight.text}</p>
+          <p class="text-sm leading-relaxed ${isDark ? 'text-gray-300' : 'text-stone-700'}">${insight.text}</p>
         </li>
       `).join('');
     }
@@ -832,19 +1035,24 @@
       document.getElementById('emptyState').classList.add('hidden');
       document.getElementById('dashboardContent').classList.remove('hidden');
       document.getElementById('filtersPanel').classList.remove('hidden');
-      lucide.createIcons(); // Re-render icons
+      lucide.createIcons();
     }
 
     // ============================================================================
     // EVENT LISTENERS
     // ============================================================================
     document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+
+      // Theme toggle
+      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
       // File input
       document.getElementById('csvFileInput').addEventListener('change', (e) => {
         handleFileUpload(e.target.files[0]);
       });
 
-      // Upload zone click
+      // Upload zone
       document.getElementById('uploadZone').addEventListener('click', () => {
         document.getElementById('csvFileInput').click();
       });
@@ -853,16 +1061,16 @@
       const uploadZone = document.getElementById('uploadZone');
       uploadZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        uploadZone.classList.add('border-indigo-500', 'bg-indigo-50');
+        uploadZone.style.transform = 'scale(1.02)';
       });
 
       uploadZone.addEventListener('dragleave', () => {
-        uploadZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+        uploadZone.style.transform = '';
       });
 
       uploadZone.addEventListener('drop', (e) => {
         e.preventDefault();
-        uploadZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+        uploadZone.style.transform = '';
         handleFileUpload(e.dataTransfer.files[0]);
       });
 
@@ -878,52 +1086,24 @@
       document.getElementById('dateToInput').addEventListener('change', (e) => {
         const date = new Date(e.target.value);
         if (!isNaN(date)) {
-          // Set to end of day
           date.setHours(23, 59, 59, 999);
           currentFilters.dateTo = date;
           applyFilters();
         }
       });
 
-      // Clear filters button
+      // Clear filters
       document.getElementById('clearFiltersBtn').addEventListener('click', clearAllFilters);
 
-      // Initialize Lucide icons
+      // Period filters
+      document.getElementById('periodToday').addEventListener('click', (e) => applyPeriodFilter('today'));
+      document.getElementById('period7Days').addEventListener('click', (e) => applyPeriodFilter('7days'));
+      document.getElementById('period30Days').addEventListener('click', (e) => applyPeriodFilter('30days'));
+      document.getElementById('periodThisMonth').addEventListener('click', (e) => applyPeriodFilter('thisMonth'));
+      document.getElementById('periodAll').addEventListener('click', (e) => applyPeriodFilter('all'));
+
       lucide.createIcons();
     });
-
-    // ============================================================================
-    // TEST DATA (commented for easy testing)
-    // ============================================================================
-    /*
-    const testCSV = `Fecha,Nombre del posible cliente,Como supo de nosotros,Fase,Motivo por que no se concreto,COMERCIAL
-11/09/25,Andrea Canales,Referidos,Cotizado,Cancelado,Alejandra Vargas
-11/09/25,Berenice Vázquez,Google,Cotizado,Fuera de Presupuesto,Ariel Morones
-14/09/25,Marcos Ushdi,Referidos,Concretado,Concretado,Alejandra Vargas
-15/09/25,Berenice Martínez,Google,Concretado,Concretado,Ariel Morones
-22/09/25,Leobardo Brizuela,Hosp Español,Concretado,Concretado,Ariel Morones
-30/09/25,Juan Pablo Cabrera,Referidos,Concretado,Concretado,Alejandra Vargas
-05/10/25,Mariana Varela,Hosp Español,Concretado,Concretado,Sofia Platas
-08/10/25,Daniel Garay,Ex Cliente,Concretado,Concretado,Alejandra Vargas
-16/10/25,Virlette Rodriguez,Hosp Satelite,Concretado,Concretado,Sofia Platas
-20/10/25,Uriel Corona,Referidos,Concretado,Concretado,Alejandra Vargas
-22/10/25,Rosemary Eustace,Referidos,Concretado,Concretado,Alejandra Vargas
-25/10/25,Mayela Cervantes,Referidos,Concretado,Concretado,Alejandra Vargas
-26/10/25,Eduardo Amizahua,Hosp Español,Concretado,Concretado,Alejandra Vargas
-27/10/25,Ricardo Moctezuma,Hosp Satelite,Concretado,Concretado,Sofia Platas
-27/10/25,Begoña Hevia,Referidos,Concretado,Concretado,Sofia Platas
-29/10/25,Laura Elena Fernández,ATEND,Concretado,Concretado,Sofia Platas
-30/10/25,Daniel Varon Shirino,ATEND,Concretado,Concretado,Sofia Platas`;
-
-    // Uncomment to test with sample data:
-    // Papa.parse(testCSV, {
-    //   header: true,
-    //   skipEmptyLines: true,
-    //   complete: function(results) {
-    //     processCSVData(results.data, results.meta.fields);
-    //   }
-    // });
-    */
   </script>
 
 </body>
