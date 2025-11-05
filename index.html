@@ -134,8 +134,7 @@
 <body class="min-h-screen antialiased overflow-x-hidden">
 
   <!-- Background Static Gradient -->
-  <div class="fixed inset-0 -z-20" style="background: #0a0a0a;">
-    <div class="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:hidden"></div>
+  <div class="fixed inset-0 -z-20 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:bg-[#0a0a0a]">
   </div>
 
   <!-- Quick Period Filters -->
@@ -373,12 +372,8 @@
       const savedTheme = localStorage.getItem('theme') || 'dark';
       if (savedTheme === 'light') {
         document.documentElement.classList.remove('dark');
-        document.body.classList.remove('from-gray-950', 'via-slate-950', 'to-black', 'text-white');
-        document.body.classList.add('from-white', 'via-gray-50', 'to-stone-100', 'text-gray-900');
       } else {
         document.documentElement.classList.add('dark');
-        document.body.classList.add('from-gray-950', 'via-slate-950', 'to-black', 'text-white');
-        document.body.classList.remove('from-white', 'via-gray-50', 'to-stone-100', 'text-gray-900');
       }
     }
 
@@ -386,19 +381,16 @@
       const html = document.documentElement;
       if (html.classList.contains('dark')) {
         html.classList.remove('dark');
-        document.body.classList.remove('from-gray-950', 'via-slate-950', 'to-black', 'text-white');
-        document.body.classList.add('from-white', 'via-gray-50', 'to-stone-100', 'text-gray-900');
         localStorage.setItem('theme', 'light');
       } else {
         html.classList.add('dark');
-        document.body.classList.add('from-gray-950', 'via-slate-950', 'to-black', 'text-white');
-        document.body.classList.remove('from-white', 'via-gray-50', 'to-stone-100', 'text-gray-900');
         localStorage.setItem('theme', 'dark');
       }
-      // Recreate charts with new colors
+      // Recreate charts and insights with new colors
       if (charts.channel) {
         updateChannelChart();
         updateStatusChart();
+        renderInsights();
       }
     }
 
@@ -833,7 +825,7 @@
             data: data,
             backgroundColor: colors.slice(0, labels.length),
             borderWidth: 3,
-            borderColor: isDark ? '#0f172a' : '#ffffff',
+            borderColor: isDark ? '#0a0a0a' : '#ffffff',
             hoverBorderWidth: 4,
             hoverOffset: 10
           }]
