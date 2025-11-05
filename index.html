@@ -340,16 +340,67 @@
     function handleFileUpload(file) {
       if (!file) return;
 
+      // First parse without headers to detect title rows
       Papa.parse(file, {
-        header: true,
+        header: false,
         skipEmptyLines: true,
         complete: function(results) {
-          processCSVData(results.data, results.meta.fields);
+          findHeadersAndProcess(results.data);
         },
         error: function(error) {
           alert('Error al procesar el archivo CSV: ' + error.message);
         }
       });
+    }
+
+    function findHeadersAndProcess(rows) {
+      if (rows.length < 2) {
+        alert('❌ El archivo CSV no tiene suficientes datos');
+        return;
+      }
+
+      // Find the row that contains the real headers
+      // Look for rows containing key words like "Fecha", "Fase", "Canal", etc.
+      let headerRowIndex = -1;
+      const headerKeywords = ['fecha', 'fase', 'canal', 'comercial', 'como supo', 'motivo'];
+
+      for (let i = 0; i < Math.min(5, rows.length); i++) {
+        const row = rows[i];
+        const rowText = row.join(' ').toLowerCase();
+
+        // Check if this row contains multiple header keywords
+        const matchCount = headerKeywords.filter(keyword => rowText.includes(keyword)).length;
+
+        if (matchCount >= 3) {
+          headerRowIndex = i;
+          break;
+        }
+      }
+
+      if (headerRowIndex === -1) {
+        alert('❌ No se pudo detectar la fila de encabezados. Asegúrate de que el CSV contenga columnas como: Fecha, Fase, Canal, Comercial, Motivo.');
+        return;
+      }
+
+      // Extract headers and data
+      const headers = rows[headerRowIndex].map(h => (h || '').trim());
+      const dataRows = rows.slice(headerRowIndex + 1);
+
+      // Convert to objects
+      const data = dataRows
+        .map(row => {
+          const obj = {};
+          headers.forEach((header, idx) => {
+            obj[header] = row[idx] || '';
+          });
+          return obj;
+        })
+        .filter(row => {
+          // Filter out completely empty rows
+          return Object.values(row).some(val => val.trim() !== '');
+        });
+
+      processCSVData(data, headers);
     }
 
     function processCSVData(data, headers) {
@@ -369,7 +420,7 @@
         if (!colComercial) missing.push('Comercial');
         if (!colEstatus) missing.push('Estatus/Motivo');
 
-        alert(`❌ Faltan columnas requeridas:\n\n${missing.join('\n')}\n\nColumnas detectadas:\n${headers.join(', ')}`);
+        alert(`❌ Faltan columnas requeridas:\n\n${missing.join('\n')}\n\nColumnas detectadas:\n${headers.filter(h => h).join(', ')}`);
         return;
       }
 
