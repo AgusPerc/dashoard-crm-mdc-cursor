@@ -8,6 +8,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -824,9 +829,8 @@
           datasets: [{
             data: data,
             backgroundColor: colors.slice(0, labels.length),
-            borderWidth: 3,
-            borderColor: isDark ? '#0a0a0a' : '#ffffff',
-            hoverBorderWidth: 4,
+            borderWidth: 0,
+            hoverBorderWidth: 0,
             hoverOffset: 10
           }]
         },
