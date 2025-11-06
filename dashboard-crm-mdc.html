@@ -25,6 +25,11 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
+  <!-- Flatpickr for modern date picker -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
   <style>
     /* Body and Font */
     body {
@@ -223,12 +228,12 @@
             <input type="date" id="endDate" class="glass-input w-full px-3 md:px-4 py-2 text-xs md:text-sm rounded-lg outline-none text-gray-900 dark:text-white">
           </div>
         </div>
-        <div class="mt-4 flex gap-2 md:gap-3">
-          <button id="applyFilters" class="px-4 md:px-6 py-2 text-xs md:text-sm bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl font-medium hover:scale-105 transition-all duration-200 text-white">
-            Aplicar Filtros
-          </button>
+        <div class="mt-4">
           <button id="resetFilters" class="px-4 md:px-6 py-2 text-xs md:text-sm glass-card rounded-xl font-medium hover:scale-105 transition-all duration-200 text-gray-900 dark:text-white">
-            Resetear
+            <span class="flex items-center gap-2">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              Resetear Filtros
+            </span>
           </button>
         </div>
       </section>
@@ -419,6 +424,7 @@
     let allData = [];
     let filteredData = [];
     let charts = {};
+    let flatpickrInstances = {};
 
     // ============================================================================
     // THEME MANAGEMENT
@@ -615,7 +621,39 @@
         const maxDate = dates[dates.length - 1];
         document.getElementById('startDate').value = formatDateForInput(minDate);
         document.getElementById('endDate').value = formatDateForInput(maxDate);
+
+        // Initialize Flatpickr for modern date pickers
+        initializeFlatpickr(minDate, maxDate);
       }
+    }
+
+    function initializeFlatpickr(minDate, maxDate) {
+      const isDark = document.documentElement.classList.contains('dark');
+      const theme = isDark ? 'dark' : 'light';
+
+      // Destroy existing instances if any
+      if (flatpickrInstances.startDate) flatpickrInstances.startDate.destroy();
+      if (flatpickrInstances.endDate) flatpickrInstances.endDate.destroy();
+
+      flatpickrInstances.startDate = flatpickr('#startDate', {
+        dateFormat: 'Y-m-d',
+        minDate: minDate,
+        maxDate: maxDate,
+        onChange: function() {
+          applyFilters();
+        },
+        theme: theme
+      });
+
+      flatpickrInstances.endDate = flatpickr('#endDate', {
+        dateFormat: 'Y-m-d',
+        minDate: minDate,
+        maxDate: maxDate,
+        onChange: function() {
+          applyFilters();
+        },
+        theme: theme
+      });
     }
 
     function applyFilters() {
@@ -663,7 +701,7 @@
       const totalNeto = totalIngresos - totalPagado;
       const margenNeto = totalIngresos > 0 ? (totalNeto / totalIngresos * 100) : 0;
 
-      // Calculate LTV (average per unique client)
+      // Calculate LTV (total income / unique clients)
       const clientTotals = {};
       filteredData.forEach(row => {
         if (row.cliente) {
@@ -671,9 +709,8 @@
         }
       });
 
-      const ltvPromedio = Object.values(clientTotals).length > 0
-        ? Object.values(clientTotals).reduce((a, b) => a + b, 0) / Object.values(clientTotals).length
-        : 0;
+      const uniqueClients = Object.keys(clientTotals).length;
+      const ltvPromedio = uniqueClients > 0 ? totalIngresos / uniqueClients : 0;
 
       // Get top 5 clients
       const sortedClients = Object.entries(clientTotals)
@@ -898,15 +935,15 @@
 
     function updateSeasonalityChart() {
       const ctx = document.getElementById('seasonalityChart');
-      const monthlyServices = {};
+      const monthlyHours = {};
 
       filteredData.forEach(row => {
         const month = row.fecha.getMonth();
-        monthlyServices[month] = (monthlyServices[month] || 0) + 1;
+        monthlyHours[month] = (monthlyHours[month] || 0) + row.horas;
       });
 
       const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-      const data = monthNames.map((name, index) => monthlyServices[index] || 0);
+      const data = monthNames.map((name, index) => monthlyHours[index] || 0);
       const colors = getChartColors();
 
       if (charts.seasonality) charts.seasonality.destroy();
@@ -916,7 +953,7 @@
         data: {
           labels: monthNames,
           datasets: [{
-            label: 'Servicios',
+            label: 'Horas',
             data: data,
             backgroundColor: 'rgba(234, 179, 8, 0.6)',
             borderColor: 'rgb(234, 179, 8)',
@@ -951,10 +988,10 @@
       filteredData.forEach(row => {
         if (row.comercial) {
           if (!comercialData[row.comercial]) {
-            comercialData[row.comercial] = { total: 0, servicios: 0 };
+            comercialData[row.comercial] = { total: 0, horas: 0 };
           }
           comercialData[row.comercial].total += row.clienteVal;
-          comercialData[row.comercial].servicios += 1;
+          comercialData[row.comercial].horas += row.horas;
         }
       });
 
@@ -968,7 +1005,7 @@
           </div>
           <h4 class="font-semibold text-sm mb-1 truncate text-gray-900 dark:text-white">${comercial}</h4>
           <p class="text-2xl font-bold text-green-400 mb-1">${formatCurrency(data.total)}</p>
-          <p class="text-xs text-gray-600 dark:text-gray-400">${data.servicios} servicios</p>
+          <p class="text-xs text-gray-600 dark:text-gray-400">${data.horas.toFixed(0)} horas totales</p>
         </div>
       `).join('');
 
@@ -999,8 +1036,8 @@
             <i data-lucide="user-check" class="w-5 h-5 text-purple-400"></i>
           </div>
           <h4 class="font-semibold text-sm mb-1 truncate text-gray-900 dark:text-white">${enfermero}</h4>
-          <p class="text-2xl font-bold text-blue-400 mb-1">${data.servicios}</p>
-          <p class="text-xs text-gray-600 dark:text-gray-400">${data.horas.toFixed(0)} horas</p>
+          <p class="text-2xl font-bold text-blue-400 mb-1">${data.servicios} <span class="text-xs font-normal text-gray-600 dark:text-gray-400">servicios</span></p>
+          <p class="text-xs text-gray-600 dark:text-gray-400">${data.horas.toFixed(0)} horas trabajadas</p>
         </div>
       `).join('');
 
@@ -1043,9 +1080,10 @@
         handleFileUpload(e.dataTransfer.files[0]);
       });
 
-      // Filters
-      document.getElementById('applyFilters').addEventListener('click', applyFilters);
+      // Filters - Auto-apply on change
+      document.getElementById('comercialFilter').addEventListener('change', applyFilters);
       document.getElementById('resetFilters').addEventListener('click', resetFilters);
+      // Note: Date inputs handle auto-apply via Flatpickr onChange
 
       // Toggle buttons for hours chart
       document.querySelectorAll('.toggle-hours').forEach(btn => {
