@@ -210,16 +210,22 @@
       background: rgba(40, 40, 40, 0.9);
     }
 
-    /* Dropdown text always dark for native browser background */
     .dark .flatpickr-current-month .flatpickr-monthDropdown-months,
     .dark .flatpickr-current-month input.cur-year {
-      color: #1e293b;
+      color: #f1f5f9;
       font-weight: 600;
     }
 
     /* Dropdown background fix for dark mode */
     .dark .flatpickr-monthDropdown-months {
       background: rgba(30, 30, 30, 0.95);
+    }
+
+    /* Fix dropdown focus/active state to keep dark background when clicked */
+    .dark .flatpickr-monthDropdown-months:focus,
+    .dark .flatpickr-monthDropdown-months:active {
+      background: rgba(30, 30, 30, 0.95);
+      color: #f1f5f9;
     }
 
     .dark .flatpickr-monthDropdown-months option {
