@@ -27,8 +27,8 @@
 
   <!-- Flatpickr for modern date picker -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
   <style>
     /* Body and Font */
@@ -149,6 +149,111 @@
     .toggle-active {
       background: linear-gradient(to right, rgb(99, 102, 241), rgb(168, 85, 247));
       color: white !important;
+    }
+
+    /* Flatpickr Custom Styles - Light Mode */
+    html:not(.dark) .flatpickr-calendar {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    html:not(.dark) .flatpickr-months,
+    html:not(.dark) .flatpickr-weekdays {
+      background: rgba(245, 245, 245, 0.9);
+    }
+
+    html:not(.dark) .flatpickr-current-month .flatpickr-monthDropdown-months,
+    html:not(.dark) .flatpickr-current-month input.cur-year {
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    html:not(.dark) .flatpickr-weekday {
+      color: #475569;
+    }
+
+    html:not(.dark) .flatpickr-day {
+      color: #1e293b;
+    }
+
+    html:not(.dark) .flatpickr-day:hover {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+
+    html:not(.dark) .flatpickr-day.selected {
+      background: linear-gradient(to right, rgb(99, 102, 241), rgb(168, 85, 247));
+      border-color: rgb(99, 102, 241);
+      color: white;
+    }
+
+    html:not(.dark) .flatpickr-day.today {
+      border-color: rgb(99, 102, 241);
+      color: rgb(99, 102, 241);
+    }
+
+    /* Flatpickr Custom Styles - Dark Mode */
+    .dark .flatpickr-calendar {
+      background: rgba(30, 30, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .dark .flatpickr-months,
+    .dark .flatpickr-weekdays {
+      background: rgba(40, 40, 40, 0.9);
+    }
+
+    .dark .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .dark .flatpickr-current-month input.cur-year {
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .dark .flatpickr-weekday {
+      color: #cbd5e1;
+    }
+
+    .dark .flatpickr-day {
+      color: #f1f5f9;
+    }
+
+    .dark .flatpickr-day:hover {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .dark .flatpickr-day.selected {
+      background: linear-gradient(to right, rgb(99, 102, 241), rgb(168, 85, 247));
+      border-color: rgb(99, 102, 241);
+      color: white;
+    }
+
+    .dark .flatpickr-day.today {
+      border-color: rgb(99, 102, 241);
+      color: rgb(99, 102, 241);
+    }
+
+    .dark .flatpickr-day.disabled,
+    .dark .flatpickr-day.disabled:hover {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    html:not(.dark) .flatpickr-day.disabled,
+    html:not(.dark) .flatpickr-day.disabled:hover {
+      color: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Flatpickr arrows */
+    .dark .flatpickr-months .flatpickr-prev-month svg,
+    .dark .flatpickr-months .flatpickr-next-month svg {
+      fill: #f1f5f9;
+    }
+
+    html:not(.dark) .flatpickr-months .flatpickr-prev-month svg,
+    html:not(.dark) .flatpickr-months .flatpickr-next-month svg {
+      fill: #1e293b;
     }
   </style>
 </head>
@@ -628,9 +733,6 @@
     }
 
     function initializeFlatpickr(minDate, maxDate) {
-      const isDark = document.documentElement.classList.contains('dark');
-      const theme = isDark ? 'dark' : 'light';
-
       // Destroy existing instances if any
       if (flatpickrInstances.startDate) flatpickrInstances.startDate.destroy();
       if (flatpickrInstances.endDate) flatpickrInstances.endDate.destroy();
@@ -639,20 +741,20 @@
         dateFormat: 'Y-m-d',
         minDate: minDate,
         maxDate: maxDate,
+        locale: 'es',
         onChange: function() {
           applyFilters();
-        },
-        theme: theme
+        }
       });
 
       flatpickrInstances.endDate = flatpickr('#endDate', {
         dateFormat: 'Y-m-d',
         minDate: minDate,
         maxDate: maxDate,
+        locale: 'es',
         onChange: function() {
           applyFilters();
-        },
-        theme: theme
+        }
       });
     }
 
