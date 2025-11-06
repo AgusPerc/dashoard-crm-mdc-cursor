@@ -765,7 +765,10 @@
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
+        delimiter: "", // Auto-detect delimiter (comma, tab, etc)
         complete: function(results) {
+          console.log('CSV Servicios - Columnas detectadas:', results.meta.fields);
+          console.log('CSV Servicios - Primera fila:', results.data[0]);
           processServiciosData(results.data);
         },
         error: function(error) {
@@ -795,28 +798,55 @@
         return;
       }
 
-      dataServicios = data
-        .map(row => {
-          const fecha = parseDateFlexible(row['fecha']);
-          if (!fecha) return null;
+      // Create a map of trimmed column names to original names
+      const firstRow = data[0];
+      const columnMap = {};
+      Object.keys(firstRow).forEach(key => {
+        const trimmedKey = key.trim().toLowerCase();
+        columnMap[trimmedKey] = key;
+      });
 
-          const pagado = parseMoneyValue(row['pagado']);
-          const horas = parseFloat(row['horas_de_servicio'] || 0);
+      console.log('CSV Servicios - Mapa de columnas:', columnMap);
+
+      dataServicios = data
+        .map((row, index) => {
+          // Get column values using case-insensitive, trimmed keys
+          const fechaKey = columnMap['fecha'];
+          const clienteKey = columnMap['cliente'];
+          const pagadoKey = columnMap['pagado'];
+          const horasKey = columnMap['horas_de_servicio'];
+          const comercialKey = columnMap['ejecutivo_comercial'];
+          const companiaKey = columnMap['compania'];
+
+          const fechaVal = fechaKey ? row[fechaKey] : null;
+          const fecha = parseDateFlexible(fechaVal);
+
+          if (!fecha) {
+            if (index < 3) { // Only log first 3 errors to avoid spam
+              console.log(`Fila ${index}: fecha inválida "${fechaVal}"`);
+            }
+            return null;
+          }
+
+          const pagado = parseMoneyValue(pagadoKey ? row[pagadoKey] : 0);
+          const horas = parseFloat(horasKey ? (row[horasKey] || 0) : 0);
 
           return {
             fecha: fecha,
-            cliente: normalizeClientName(row['cliente'] || '').trim(),
-            clienteOriginal: (row['cliente'] || '').trim(),
+            cliente: normalizeClientName(clienteKey ? (row[clienteKey] || '') : '').trim(),
+            clienteOriginal: (clienteKey ? (row[clienteKey] || '') : '').trim(),
             pagado: pagado,
             horas: horas,
-            comercial: (row['ejecutivo_comercial'] || '').trim(),
-            enfermero: (row['compania'] || '').trim()
+            comercial: (comercialKey ? (row[comercialKey] || '') : '').trim(),
+            enfermero: (companiaKey ? (row[companiaKey] || '') : '').trim()
           };
         })
         .filter(row => row !== null);
 
+      console.log(`CSV Servicios - ${dataServicios.length} filas válidas de ${data.length} totales`);
+
       if (dataServicios.length === 0) {
-        alert('❌ No se encontraron filas válidas en CSV Servicios');
+        alert('❌ No se encontraron filas válidas en CSV Servicios\n\nRevisa la consola del navegador (F12) para más detalles.');
         return;
       }
 
