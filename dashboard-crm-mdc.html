@@ -151,6 +151,19 @@
       color: white !important;
     }
 
+    /* Alert/Info Box */
+    .alert-info {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+    }
+
+    html:not(.dark) .alert-info {
+      background: rgba(59, 130, 246, 0.05);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+
     /* Flatpickr Custom Styles - Light Mode */
     html:not(.dark) .flatpickr-calendar {
       background: rgba(255, 255, 255, 0.95);
@@ -168,7 +181,6 @@
       font-weight: 600;
     }
 
-    /* Dropdown text always dark for native browser background */
     html:not(.dark) .flatpickr-current-month .flatpickr-monthDropdown-months {
       color: #1e293b;
       font-weight: 600;
@@ -216,12 +228,10 @@
       font-weight: 600;
     }
 
-    /* Dropdown background fix for dark mode */
     .dark .flatpickr-monthDropdown-months {
       background: rgba(30, 30, 30, 0.95);
     }
 
-    /* Fix dropdown focus/active state to keep dark background when clicked */
     .dark .flatpickr-monthDropdown-months:focus,
     .dark .flatpickr-monthDropdown-months:active {
       background: rgba(30, 30, 30, 0.95);
@@ -267,7 +277,6 @@
       color: rgba(0, 0, 0, 0.3);
     }
 
-    /* Flatpickr arrows */
     .dark .flatpickr-months .flatpickr-prev-month svg,
     .dark .flatpickr-months .flatpickr-next-month svg {
       fill: #f1f5f9;
@@ -298,248 +307,324 @@
           <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mt-0.5">Análisis de servicios y rendimiento</p>
         </div>
       </div>
-      <div class="flex items-center gap-2 md:gap-3 w-full md:w-auto">
+      <div class="flex items-center gap-2 md:gap-3 w-full md:w-auto flex-wrap">
         <button id="themeToggle" class="glass-card p-2.5 md:p-3 rounded-xl hover:scale-105 transition-all duration-200" aria-label="Cambiar tema">
           <i data-lucide="moon" class="w-5 h-5 dark-icon hidden dark:block"></i>
           <i data-lucide="sun" class="w-5 h-5 light-icon block dark:hidden text-gray-800"></i>
         </button>
-        <label for="csvFileInput" class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl hover:scale-105 transition-all duration-200 shadow-lg text-white flex-1 md:flex-initial">
+        <label for="csvServiciosInput" class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl hover:scale-105 transition-all duration-200 shadow-lg text-white">
           <span class="flex items-center justify-center gap-2">
             <i data-lucide="upload" class="w-4 h-4"></i>
-            <span>Cargar CSV</span>
+            <span>CSV Servicios</span>
           </span>
         </label>
-        <input type="file" id="csvFileInput" accept=".csv" class="hidden" aria-label="Cargar archivo CSV">
+        <input type="file" id="csvServiciosInput" accept=".csv" class="hidden" aria-label="Cargar CSV Servicios">
+        <label for="csvCompaniasInput" class="cursor-pointer px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium bg-gradient-to-r from-green-500 to-teal-500 rounded-xl hover:scale-105 transition-all duration-200 shadow-lg text-white">
+          <span class="flex items-center justify-center gap-2">
+            <i data-lucide="upload" class="w-4 h-4"></i>
+            <span>CSV BD Compañías</span>
+          </span>
+        </label>
+        <input type="file" id="csvCompaniasInput" accept=".csv" class="hidden" aria-label="Cargar CSV BD Compañías">
       </div>
     </header>
 
     <!-- Upload Zone (shown when no data) -->
-    <div id="uploadZone" class="relative glass-card rounded-2xl p-8 md:p-12 text-center cursor-pointer transition-all duration-300 hover:scale-[1.02] mb-6">
+    <div id="uploadZone" class="relative glass-card rounded-2xl p-8 md:p-12 text-center mb-6">
       <div class="flex flex-col items-center gap-3 md:gap-4">
         <div class="icon-container w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center">
           <i data-lucide="file-up" class="w-8 h-8 md:w-10 md:h-10 text-blue-400"></i>
         </div>
         <div>
-          <p class="text-sm md:text-base font-semibold text-gray-900 dark:text-white">Arrastra tu CSV aquí o haz clic para seleccionar</p>
-          <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mt-2">El archivo debe contener las columnas: CHECK-in, $ Cliente, $ Compañia, CLIENTE, COMPAÑÍA, COMERCIAL, HORAS</p>
+          <p class="text-sm md:text-base font-semibold text-gray-900 dark:text-white mb-2">Carga tus archivos CSV</p>
+          <div class="text-xs md:text-sm text-gray-600 dark:text-gray-300 space-y-2">
+            <p><strong class="text-blue-400">CSV Servicios:</strong> Para análisis de ingresos y clientes</p>
+            <p class="text-xs">Columnas: fecha, cliente, monto, pagado, ejecutivo_comercial, compania, horas_de_servicio</p>
+            <p class="mt-4"><strong class="text-green-400">CSV BD Compañías:</strong> Para análisis de operaciones de enfermeros</p>
+            <p class="text-xs">Columnas: CHECK-in, $ Cliente, $ Compañia, CLIENTE, COMPAÑÍA, COMERCIAL, HORAS</p>
+            <p class="mt-4 text-yellow-400">Puedes cargar uno o ambos archivos</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Main Content (hidden until CSV is loaded) -->
-    <div id="mainContent" class="hidden space-y-6">
+    <!-- Status Alerts -->
+    <div id="statusAlerts" class="hidden space-y-3 mb-6"></div>
 
-      <!-- Filters Section -->
-      <section class="glass-card rounded-2xl p-4 md:p-6 animate-slide-up">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="icon-container p-2 rounded-lg">
-            <i data-lucide="filter" class="w-4 h-4 md:w-5 md:h-5 text-purple-400"></i>
-          </div>
-          <h2 class="text-base md:text-lg font-bold text-gray-900 dark:text-white">Filtros</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-          <!-- Comercial Filter -->
-          <div>
-            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Comercial</label>
-            <select id="comercialFilter" class="glass-input w-full px-3 md:px-4 py-2 text-xs md:text-sm rounded-lg outline-none text-gray-900 dark:text-white">
-              <option value="">Todos los comerciales</option>
-            </select>
-          </div>
-          <!-- Date Range Filters -->
-          <div>
-            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Fecha Inicio</label>
-            <input type="date" id="startDate" class="glass-input w-full px-3 md:px-4 py-2 text-xs md:text-sm rounded-lg outline-none text-gray-900 dark:text-white">
-          </div>
-          <div>
-            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Fecha Fin</label>
-            <input type="date" id="endDate" class="glass-input w-full px-3 md:px-4 py-2 text-xs md:text-sm rounded-lg outline-none text-gray-900 dark:text-white">
-          </div>
-        </div>
-        <div class="mt-4">
-          <button id="resetFilters" class="px-4 md:px-6 py-2 text-xs md:text-sm glass-card rounded-xl font-medium hover:scale-105 transition-all duration-200 text-gray-900 dark:text-white">
-            <span class="flex items-center gap-2">
-              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-              Resetear Filtros
-            </span>
-          </button>
-        </div>
-      </section>
+    <!-- Main Content (hidden until at least one CSV is loaded) -->
+    <div id="mainContent" class="hidden space-y-8">
 
-      <!-- KPIs Section -->
-      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-slide-up">
-
-        <!-- KPI 1: LTV Promedio -->
-        <div class="glass-card rounded-2xl p-4 md:p-6 group hover:scale-[1.02] transition-all duration-300">
-          <div class="flex items-start justify-between mb-3 md:mb-4">
-            <div class="icon-container p-2 md:p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+      <!-- ============================================================ -->
+      <!-- SECCIÓN 1: ANÁLISIS DE INGRESOS Y CLIENTES -->
+      <!-- ============================================================ -->
+      <div id="section1" class="hidden space-y-6">
+        <div class="glass-card rounded-2xl p-4 md:p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="icon-container p-2 md:p-3 rounded-lg">
               <i data-lucide="trending-up" class="w-5 h-5 md:w-6 md:h-6 text-blue-400"></i>
             </div>
-          </div>
-          <p class="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">LTV Promedio</p>
-          <p id="kpiLTV" class="text-3xl md:text-4xl font-bold tabular-nums text-gray-900 dark:text-white">$0</p>
-        </div>
-
-        <!-- KPI 2: Total Ingresos -->
-        <div class="glass-card rounded-2xl p-4 md:p-6 group hover:scale-[1.02] transition-all duration-300">
-          <div class="flex items-start justify-between mb-3 md:mb-4">
-            <div class="icon-container p-2 md:p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-              <i data-lucide="dollar-sign" class="w-5 h-5 md:w-6 md:h-6 text-green-400"></i>
-            </div>
-          </div>
-          <p class="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Total Ingresos</p>
-          <p id="kpiTotalIngresos" class="text-3xl md:text-4xl font-bold tabular-nums text-gray-900 dark:text-white">$0</p>
-        </div>
-
-        <!-- KPI 3: Total Pagado -->
-        <div class="glass-card rounded-2xl p-4 md:p-6 group hover:scale-[1.02] transition-all duration-300">
-          <div class="flex items-start justify-between mb-3 md:mb-4">
-            <div class="icon-container p-2 md:p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-              <i data-lucide="credit-card" class="w-5 h-5 md:w-6 md:h-6 text-red-400"></i>
-            </div>
-          </div>
-          <p class="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Total Pagado a Enfermeros</p>
-          <p id="kpiTotalPagado" class="text-3xl md:text-4xl font-bold tabular-nums text-gray-900 dark:text-white">$0</p>
-        </div>
-
-        <!-- KPI 4: Total Neto -->
-        <div class="glass-card rounded-2xl p-4 md:p-6 group hover:scale-[1.02] transition-all duration-300">
-          <div class="flex items-start justify-between mb-3 md:mb-4">
-            <div class="icon-container p-2 md:p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-              <i data-lucide="wallet" class="w-5 h-5 md:w-6 md:h-6 text-purple-400"></i>
-            </div>
-          </div>
-          <p class="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Total Neto</p>
-          <p id="kpiTotalNeto" class="text-3xl md:text-4xl font-bold tabular-nums text-gray-900 dark:text-white">$0</p>
-        </div>
-
-        <!-- KPI 5: % Margen Neto -->
-        <div class="glass-card rounded-2xl p-4 md:p-6 group hover:scale-[1.02] transition-all duration-300">
-          <div class="flex items-start justify-between mb-3 md:mb-4">
-            <div class="icon-container p-2 md:p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-              <i data-lucide="percent" class="w-5 h-5 md:w-6 md:h-6 text-yellow-400"></i>
-            </div>
-          </div>
-          <p class="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">% Margen Neto</p>
-          <p id="kpiMargenNeto" class="text-3xl md:text-4xl font-bold tabular-nums text-gray-900 dark:text-white">0%</p>
-        </div>
-
-        <!-- KPI 6: Top 5 Clientes -->
-        <div class="glass-card rounded-2xl p-4 md:p-6 group hover:scale-[1.02] transition-all duration-300">
-          <div class="flex items-start justify-between mb-3 md:mb-4">
-            <div class="icon-container p-2 md:p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-              <i data-lucide="users" class="w-5 h-5 md:w-6 md:h-6 text-indigo-400"></i>
-            </div>
-          </div>
-          <p class="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Top 5 Clientes</p>
-          <div id="top5Clientes" class="space-y-1 text-xs">
-            <!-- Top 5 will be populated here -->
-          </div>
-        </div>
-
-      </section>
-
-      <!-- Charts Section -->
-      <section class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-
-        <!-- Hours Chart -->
-        <div class="glass-card rounded-2xl p-4 md:p-6 animate-slide-up">
-          <div class="flex items-center justify-between mb-4 md:mb-5">
             <div>
-              <h2 class="text-base md:text-lg font-bold text-gray-900 dark:text-white">Horas Trabajadas</h2>
-              <p class="text-xs md:text-sm text-gray-700 dark:text-gray-200 mt-0.5">Por semana o mes</p>
-            </div>
-            <div class="flex gap-2">
-              <button class="toggle-hours px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm transition-all toggle-active text-white" data-view="week">Semanas</button>
-              <button class="toggle-hours px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm transition-all glass-card text-gray-900 dark:text-white" data-view="month">Meses</button>
+              <h2 class="text-lg md:text-xl font-bold text-gray-900 dark:text-white">Sección 1: Análisis de Ingresos y Clientes</h2>
+              <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300">Fuente: CSV Servicios</p>
             </div>
           </div>
-          <div class="chart-container">
-            <canvas id="hoursChart"></canvas>
-          </div>
-        </div>
 
-        <!-- Revenue Chart -->
-        <div class="glass-card rounded-2xl p-4 md:p-6 animate-slide-up">
-          <div class="flex items-center justify-between mb-4 md:mb-5">
-            <div>
-              <h2 class="text-base md:text-lg font-bold text-gray-900 dark:text-white">Ingresos</h2>
-              <p class="text-xs md:text-sm text-gray-700 dark:text-gray-200 mt-0.5">Por semana o mes</p>
+          <!-- Filters Section 1 -->
+          <div class="bg-black/10 dark:bg-white/5 rounded-xl p-4 mb-4">
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="filter" class="w-4 h-4 text-purple-400"></i>
+              <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Filtros</h3>
             </div>
-            <div class="flex gap-2">
-              <button class="toggle-revenue px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm transition-all toggle-active text-white" data-view="week">Semanas</button>
-              <button class="toggle-revenue px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm transition-all glass-card text-gray-900 dark:text-white" data-view="month">Meses</button>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-2">Comercial</label>
+                <select id="comercialFilter1" class="glass-input w-full px-3 py-2 text-xs rounded-lg outline-none text-gray-900 dark:text-white">
+                  <option value="">Todos los comerciales</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-2">Fecha Inicio</label>
+                <input type="date" id="startDate1" class="glass-input w-full px-3 py-2 text-xs rounded-lg outline-none text-gray-900 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-2">Fecha Fin</label>
+                <input type="date" id="endDate1" class="glass-input w-full px-3 py-2 text-xs rounded-lg outline-none text-gray-900 dark:text-white">
+              </div>
+            </div>
+            <div class="mt-3">
+              <button id="resetFilters1" class="px-4 py-2 text-xs glass-card rounded-lg font-medium hover:scale-105 transition-all text-gray-900 dark:text-white">
+                <span class="flex items-center gap-2">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                  Resetear Filtros
+                </span>
+              </button>
             </div>
           </div>
-          <div class="chart-container">
-            <canvas id="revenueChart"></canvas>
-          </div>
-        </div>
 
-        <!-- Evolution Chart -->
-        <div class="glass-card rounded-2xl p-4 md:p-6 animate-slide-up">
-          <div class="flex items-center justify-between mb-4 md:mb-5">
-            <div>
-              <h2 class="text-base md:text-lg font-bold text-gray-900 dark:text-white">Evolución de Ingresos</h2>
-              <p class="text-xs md:text-sm text-gray-700 dark:text-gray-200 mt-0.5">Tendencia mensual</p>
+          <!-- KPIs Section 1 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <!-- LTV -->
+            <div class="glass-card rounded-xl p-4 group hover:scale-[1.02] transition-all">
+              <div class="icon-container p-2 rounded-lg mb-3 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="trending-up" class="w-5 h-5 text-blue-400"></i>
+              </div>
+              <p class="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">LTV Promedio</p>
+              <p id="kpiLTV" class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">$0</p>
             </div>
-            <div class="icon-container p-2 md:p-2.5 rounded-lg">
-              <i data-lucide="trending-up" class="w-4 h-4 md:w-5 md:h-5 text-purple-400"></i>
+            <!-- Total Ingresos -->
+            <div class="glass-card rounded-xl p-4 group hover:scale-[1.02] transition-all">
+              <div class="icon-container p-2 rounded-lg mb-3 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="dollar-sign" class="w-5 h-5 text-green-400"></i>
+              </div>
+              <p class="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Total Ingresos</p>
+              <p id="kpiTotalIngresos1" class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">$0</p>
+            </div>
+            <!-- Top 5 Clientes -->
+            <div class="glass-card rounded-xl p-4 group hover:scale-[1.02] transition-all">
+              <div class="icon-container p-2 rounded-lg mb-3 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="users" class="w-5 h-5 text-indigo-400"></i>
+              </div>
+              <p class="text-xs font-medium text-gray-700 dark:text-gray-200 mb-2">Top 5 Clientes</p>
+              <div id="top5Clientes" class="space-y-1 text-xs max-h-32 overflow-y-auto">
+                <!-- Will be populated -->
+              </div>
             </div>
           </div>
-          <div class="chart-container">
-            <canvas id="evolutionChart"></canvas>
-          </div>
-        </div>
 
-        <!-- Seasonality Chart -->
-        <div class="glass-card rounded-2xl p-4 md:p-6 animate-slide-up">
-          <div class="flex items-center justify-between mb-4 md:mb-5">
-            <div>
-              <h2 class="text-base md:text-lg font-bold text-gray-900 dark:text-white">Estacionalidad</h2>
-              <p class="text-xs md:text-sm text-gray-700 dark:text-gray-200 mt-0.5">Demanda por mes</p>
+          <!-- Charts Section 1 -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <!-- Revenue Chart -->
+            <div class="glass-card rounded-xl p-4">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-sm font-bold text-gray-900 dark:text-white">Ingresos</h3>
+                  <p class="text-xs text-gray-600 dark:text-gray-300">Por semana o mes</p>
+                </div>
+                <div class="flex gap-2">
+                  <button class="toggle-revenue px-2 py-1 rounded-lg text-xs transition-all toggle-active text-white" data-view="week">Semanas</button>
+                  <button class="toggle-revenue px-2 py-1 rounded-lg text-xs transition-all glass-card text-gray-900 dark:text-white" data-view="month">Meses</button>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+              </div>
             </div>
-            <div class="icon-container p-2 md:p-2.5 rounded-lg">
-              <i data-lucide="calendar" class="w-4 h-4 md:w-5 md:h-5 text-yellow-400"></i>
+
+            <!-- Evolution Chart -->
+            <div class="glass-card rounded-xl p-4">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-sm font-bold text-gray-900 dark:text-white">Evolución de Ingresos</h3>
+                  <p class="text-xs text-gray-600 dark:text-gray-300">Tendencia mensual</p>
+                </div>
+                <div class="icon-container p-2 rounded-lg">
+                  <i data-lucide="trending-up" class="w-4 h-4 text-purple-400"></i>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="evolutionChart"></canvas>
+              </div>
             </div>
           </div>
-          <div class="chart-container">
-            <canvas id="seasonalityChart"></canvas>
-          </div>
-        </div>
 
-      </section>
-
-      <!-- Comerciales Cards Section -->
-      <section class="glass-card rounded-2xl p-4 md:p-6 animate-slide-up">
-        <div class="flex items-center gap-3 mb-4 md:mb-5">
-          <div class="icon-container p-2 md:p-2.5 rounded-lg">
-            <i data-lucide="users" class="w-4 h-4 md:w-5 md:h-5 text-blue-400"></i>
-          </div>
+          <!-- Top Comerciales Cards -->
           <div>
-            <h2 class="text-base md:text-lg font-bold text-gray-900 dark:text-white">Total Vendido por Comercial</h2>
-            <p class="text-xs md:text-sm text-gray-700 dark:text-gray-200">Desempeño del equipo</p>
+            <div class="flex items-center gap-2 mb-3">
+              <div class="icon-container p-2 rounded-lg">
+                <i data-lucide="users" class="w-4 h-4 text-blue-400"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-gray-900 dark:text-white">Total Vendido por Comercial</h3>
+                <p class="text-xs text-gray-600 dark:text-gray-300">Desempeño del equipo</p>
+              </div>
+            </div>
+            <div id="comercialesCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <!-- Cards will be populated -->
+            </div>
           </div>
         </div>
-        <div id="comercialesCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Cards will be populated here -->
-        </div>
-      </section>
+      </div>
 
-      <!-- Enfermeros Cards Section -->
-      <section class="glass-card rounded-2xl p-4 md:p-6 animate-slide-up">
-        <div class="flex items-center gap-3 mb-4 md:mb-5">
-          <div class="icon-container p-2 md:p-2.5 rounded-lg">
-            <i data-lucide="user-check" class="w-4 h-4 md:w-5 md:h-5 text-purple-400"></i>
+      <!-- ============================================================ -->
+      <!-- SECCIÓN 2: ANÁLISIS DE RENTABILIDAD Y OPERACIONES -->
+      <!-- ============================================================ -->
+      <div id="section2" class="hidden space-y-6">
+        <div class="glass-card rounded-2xl p-4 md:p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="icon-container p-2 md:p-3 rounded-lg">
+              <i data-lucide="bar-chart-3" class="w-5 h-5 md:w-6 md:h-6 text-green-400"></i>
+            </div>
+            <div>
+              <h2 class="text-lg md:text-xl font-bold text-gray-900 dark:text-white">Sección 2: Análisis de Rentabilidad y Operaciones</h2>
+              <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300">Fuente: Ambos CSV (agrupados por fecha)</p>
+            </div>
           </div>
+
+          <!-- Info Alert -->
+          <div class="alert-info mb-4">
+            <div class="flex items-start gap-2">
+              <i data-lucide="info" class="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5"></i>
+              <p class="text-xs text-gray-700 dark:text-gray-200">
+                Esta sección muestra datos de <strong>todos los comerciales</strong> del período seleccionado, ya que no se puede relacionar directamente los pagos a enfermeros con comerciales específicos.
+              </p>
+            </div>
+          </div>
+
+          <!-- Filters Section 2 -->
+          <div class="bg-black/10 dark:bg-white/5 rounded-xl p-4 mb-4">
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="filter" class="w-4 h-4 text-purple-400"></i>
+              <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Filtros (Solo Fecha)</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-2">Fecha Inicio</label>
+                <input type="date" id="startDate2" class="glass-input w-full px-3 py-2 text-xs rounded-lg outline-none text-gray-900 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-2">Fecha Fin</label>
+                <input type="date" id="endDate2" class="glass-input w-full px-3 py-2 text-xs rounded-lg outline-none text-gray-900 dark:text-white">
+              </div>
+            </div>
+            <div class="mt-3">
+              <button id="resetFilters2" class="px-4 py-2 text-xs glass-card rounded-lg font-medium hover:scale-105 transition-all text-gray-900 dark:text-white">
+                <span class="flex items-center gap-2">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                  Resetear Filtros
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- KPIs Section 2 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Total Ingresos -->
+            <div class="glass-card rounded-xl p-4 group hover:scale-[1.02] transition-all">
+              <div class="icon-container p-2 rounded-lg mb-3 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="dollar-sign" class="w-5 h-5 text-green-400"></i>
+              </div>
+              <p class="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Total Ingresos</p>
+              <p id="kpiTotalIngresos2" class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">$0</p>
+            </div>
+            <!-- Total Pagado -->
+            <div class="glass-card rounded-xl p-4 group hover:scale-[1.02] transition-all">
+              <div class="icon-container p-2 rounded-lg mb-3 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="credit-card" class="w-5 h-5 text-red-400"></i>
+              </div>
+              <p class="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Total Pagado a Enfermeros</p>
+              <p id="kpiTotalPagado" class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">$0</p>
+            </div>
+            <!-- Total Neto -->
+            <div class="glass-card rounded-xl p-4 group hover:scale-[1.02] transition-all">
+              <div class="icon-container p-2 rounded-lg mb-3 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="wallet" class="w-5 h-5 text-purple-400"></i>
+              </div>
+              <p class="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Total Neto</p>
+              <p id="kpiTotalNeto" class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">$0</p>
+            </div>
+            <!-- Margen -->
+            <div class="glass-card rounded-xl p-4 group hover:scale-[1.02] transition-all">
+              <div class="icon-container p-2 rounded-lg mb-3 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="percent" class="w-5 h-5 text-yellow-400"></i>
+              </div>
+              <p class="text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">% Margen Neto</p>
+              <p id="kpiMargenNeto" class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">0%</p>
+            </div>
+          </div>
+
+          <!-- Charts Section 2 -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <!-- Hours Chart -->
+            <div class="glass-card rounded-xl p-4">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-sm font-bold text-gray-900 dark:text-white">Horas Trabajadas</h3>
+                  <p class="text-xs text-gray-600 dark:text-gray-300">Por semana o mes</p>
+                </div>
+                <div class="flex gap-2">
+                  <button class="toggle-hours px-2 py-1 rounded-lg text-xs transition-all toggle-active text-white" data-view="week">Semanas</button>
+                  <button class="toggle-hours px-2 py-1 rounded-lg text-xs transition-all glass-card text-gray-900 dark:text-white" data-view="month">Meses</button>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="hoursChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Seasonality Chart -->
+            <div class="glass-card rounded-xl p-4">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-sm font-bold text-gray-900 dark:text-white">Estacionalidad</h3>
+                  <p class="text-xs text-gray-600 dark:text-gray-300">Demanda por mes</p>
+                </div>
+                <div class="icon-container p-2 rounded-lg">
+                  <i data-lucide="calendar" class="w-4 h-4 text-yellow-400"></i>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="seasonalityChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Enfermeros Cards -->
           <div>
-            <h2 class="text-base md:text-lg font-bold text-gray-900 dark:text-white">Top Enfermeros Más Utilizados</h2>
-            <p class="text-xs md:text-sm text-gray-700 dark:text-gray-200">Colaboradores destacados</p>
+            <div class="flex items-center gap-2 mb-3">
+              <div class="icon-container p-2 rounded-lg">
+                <i data-lucide="user-check" class="w-4 h-4 text-purple-400"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-gray-900 dark:text-white">Top Enfermeros Más Utilizados</h3>
+                <p class="text-xs text-gray-600 dark:text-gray-300">Colaboradores destacados</p>
+              </div>
+            </div>
+            <div id="enfermerosCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <!-- Cards will be populated -->
+            </div>
           </div>
         </div>
-        <div id="enfermerosCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Cards will be populated here -->
-        </div>
-      </section>
+      </div>
 
     </div>
   </div>
@@ -548,8 +633,10 @@
     // ============================================================================
     // GLOBAL STATE
     // ============================================================================
-    let allData = [];
-    let filteredData = [];
+    let dataServicios = [];
+    let dataCompanias = [];
+    let filteredDataServicios = [];
+    let filteredDataCompanias = [];
     let charts = {};
     let flatpickrInstances = {};
 
@@ -583,10 +670,16 @@
       }
 
       // Recreate charts with new colors
-      if (charts.hours) {
-        updateHoursChart(hoursChartView);
+      recreateAllCharts();
+    }
+
+    function recreateAllCharts() {
+      if (dataServicios.length > 0) {
         updateRevenueChart(revenueChartView);
         updateEvolutionChart();
+      }
+      if (dataCompanias.length > 0) {
+        updateHoursChart(hoursChartView);
         updateSeasonalityChart();
       }
     }
@@ -657,81 +750,188 @@
       };
     }
 
+    function normalizeClientName(name) {
+      if (!name) return '';
+      // Remove ID prefix like "1756 - "
+      return name.replace(/^\d+\s*-\s*/, '').trim();
+    }
+
     // ============================================================================
     // CSV UPLOAD & PARSING
     // ============================================================================
-    function handleFileUpload(file) {
+    function handleServiciosUpload(file) {
       if (!file) return;
 
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-          processCSVData(results.data);
+          processServiciosData(results.data);
         },
         error: function(error) {
-          alert('Error al procesar el archivo CSV: ' + error.message);
+          alert('Error al procesar CSV Servicios: ' + error.message);
         }
       });
     }
 
-    function processCSVData(data) {
+    function handleCompaniasUpload(file) {
+      if (!file) return;
+
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          processCompaniasData(results.data);
+        },
+        error: function(error) {
+          alert('Error al procesar CSV BD Compañías: ' + error.message);
+        }
+      });
+    }
+
+    function processServiciosData(data) {
       if (!data || data.length === 0) {
-        alert('❌ El archivo CSV está vacío');
+        alert('❌ El CSV Servicios está vacío');
         return;
       }
 
-      // Process each row
-      allData = data
+      dataServicios = data
         .map(row => {
-          // Parse date from CHECK-in column
+          const fecha = parseDateFlexible(row['fecha']);
+          if (!fecha) return null;
+
+          const pagado = parseMoneyValue(row['pagado']);
+          const horas = parseFloat(row['horas_de_servicio'] || 0);
+
+          return {
+            fecha: fecha,
+            cliente: normalizeClientName(row['cliente'] || '').trim(),
+            clienteOriginal: (row['cliente'] || '').trim(),
+            pagado: pagado,
+            horas: horas,
+            comercial: (row['ejecutivo_comercial'] || '').trim(),
+            enfermero: (row['compania'] || '').trim()
+          };
+        })
+        .filter(row => row !== null);
+
+      if (dataServicios.length === 0) {
+        alert('❌ No se encontraron filas válidas en CSV Servicios');
+        return;
+      }
+
+      filteredDataServicios = [...dataServicios];
+      updateStatusAlerts();
+      showMainContent();
+      populateSection1Filters();
+      setDefaultDateRangeSection1();
+      updateSection1();
+
+      lucide.createIcons();
+    }
+
+    function processCompaniasData(data) {
+      if (!data || data.length === 0) {
+        alert('❌ El CSV BD Compañías está vacío');
+        return;
+      }
+
+      dataCompanias = data
+        .map(row => {
           const fecha = parseDateFlexible(row['CHECK-in']);
           if (!fecha) return null;
 
-          // Parse money values (handle $-, empty, and regular values)
-          const clienteVal = parseMoneyValue(row['$ Cliente']);
           const companiaVal = parseMoneyValue(row['$ Compañia']);
           const horas = parseFloat(row['HORAS'] || 0);
 
           return {
             fecha: fecha,
-            cliente: (row['CLIENTE'] || '').trim(),
-            clienteVal: clienteVal,
             companiaVal: companiaVal,
             horas: horas,
             comercial: (row['COMERCIAL'] || '').trim(),
-            compania: (row['COMPAÑÍA'] || '').trim()
+            enfermero: (row['COMPAÑÍA'] || '').trim()
           };
         })
         .filter(row => row !== null);
 
-      if (allData.length === 0) {
-        alert('❌ No se encontraron filas válidas en el CSV');
+      if (dataCompanias.length === 0) {
+        alert('❌ No se encontraron filas válidas en CSV BD Compañías');
         return;
       }
 
-      filteredData = [...allData];
-
-      // Hide upload zone and show main content
-      document.getElementById('uploadZone').classList.add('hidden');
-      document.getElementById('mainContent').classList.remove('hidden');
-
-      // Populate filters
-      populateComercialFilter();
-      setDefaultDateRange();
-
-      // Update dashboard
-      updateDashboard();
+      filteredDataCompanias = [...dataCompanias];
+      updateStatusAlerts();
+      showMainContent();
+      setDefaultDateRangeSection2();
+      updateSection2();
 
       lucide.createIcons();
     }
 
+    function updateStatusAlerts() {
+      const container = document.getElementById('statusAlerts');
+      let alerts = [];
+
+      if (dataServicios.length > 0 && dataCompanias.length === 0) {
+        alerts.push(`
+          <div class="alert-info">
+            <div class="flex items-start gap-2">
+              <i data-lucide="info" class="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5"></i>
+              <p class="text-xs text-gray-700 dark:text-gray-200">
+                <strong>CSV Servicios cargado.</strong> La Sección 2 (Rentabilidad) no está disponible sin el CSV BD Compañías.
+              </p>
+            </div>
+          </div>
+        `);
+      } else if (dataCompanias.length > 0 && dataServicios.length === 0) {
+        alerts.push(`
+          <div class="alert-info">
+            <div class="flex items-start gap-2">
+              <i data-lucide="info" class="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5"></i>
+              <p class="text-xs text-gray-700 dark:text-gray-200">
+                <strong>CSV BD Compañías cargado.</strong> La Sección 1 (Ingresos y Clientes) no está disponible sin el CSV Servicios.
+              </p>
+            </div>
+          </div>
+        `);
+      } else if (dataServicios.length > 0 && dataCompanias.length > 0) {
+        alerts.push(`
+          <div class="alert-info">
+            <div class="flex items-start gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5"></i>
+              <p class="text-xs text-gray-700 dark:text-gray-200">
+                <strong>Ambos CSV cargados.</strong> Todas las secciones están disponibles.
+              </p>
+            </div>
+          </div>
+        `);
+      }
+
+      if (alerts.length > 0) {
+        container.innerHTML = alerts.join('');
+        container.classList.remove('hidden');
+        lucide.createIcons();
+      }
+    }
+
+    function showMainContent() {
+      document.getElementById('uploadZone').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+
+      if (dataServicios.length > 0) {
+        document.getElementById('section1').classList.remove('hidden');
+      }
+      if (dataCompanias.length > 0 || dataServicios.length > 0) {
+        document.getElementById('section2').classList.remove('hidden');
+      }
+    }
+
     // ============================================================================
-    // FILTERS
+    // SECTION 1: FILTERS
     // ============================================================================
-    function populateComercialFilter() {
-      const comerciales = [...new Set(allData.map(row => row.comercial).filter(c => c))].sort();
-      const select = document.getElementById('comercialFilter');
+    function populateSection1Filters() {
+      const comerciales = [...new Set(dataServicios.map(row => row.comercial).filter(c => c))].sort();
+      const select = document.getElementById('comercialFilter1');
       select.innerHTML = '<option value="">Todos los comerciales</option>';
       comerciales.forEach(comercial => {
         const option = document.createElement('option');
@@ -741,120 +941,251 @@
       });
     }
 
-    function setDefaultDateRange() {
-      const dates = allData.map(row => row.fecha).sort((a, b) => a - b);
+    function setDefaultDateRangeSection1() {
+      const dates = dataServicios.map(row => row.fecha).sort((a, b) => a - b);
       if (dates.length > 0) {
         const minDate = dates[0];
         const maxDate = dates[dates.length - 1];
-        document.getElementById('startDate').value = formatDateForInput(minDate);
-        document.getElementById('endDate').value = formatDateForInput(maxDate);
+        document.getElementById('startDate1').value = formatDateForInput(minDate);
+        document.getElementById('endDate1').value = formatDateForInput(maxDate);
 
-        // Initialize Flatpickr for modern date pickers
-        initializeFlatpickr(minDate, maxDate);
+        initializeFlatpickr('startDate1', 'endDate1', minDate, maxDate, applyFilters1);
       }
     }
 
-    function initializeFlatpickr(minDate, maxDate) {
-      // Destroy existing instances if any
-      if (flatpickrInstances.startDate) flatpickrInstances.startDate.destroy();
-      if (flatpickrInstances.endDate) flatpickrInstances.endDate.destroy();
-
-      flatpickrInstances.startDate = flatpickr('#startDate', {
-        dateFormat: 'Y-m-d',
-        minDate: minDate,
-        maxDate: maxDate,
-        locale: 'es',
-        onChange: function() {
-          applyFilters();
-        }
-      });
-
-      flatpickrInstances.endDate = flatpickr('#endDate', {
-        dateFormat: 'Y-m-d',
-        minDate: minDate,
-        maxDate: maxDate,
-        locale: 'es',
-        onChange: function() {
-          applyFilters();
-        }
-      });
-    }
-
-    function applyFilters() {
-      const comercial = document.getElementById('comercialFilter').value;
-      const startDateVal = document.getElementById('startDate').value;
-      const endDateVal = document.getElementById('endDate').value;
+    function applyFilters1() {
+      const comercial = document.getElementById('comercialFilter1').value;
+      const startDateVal = document.getElementById('startDate1').value;
+      const endDateVal = document.getElementById('endDate1').value;
 
       const startDate = startDateVal ? new Date(startDateVal) : null;
       const endDate = endDateVal ? new Date(endDateVal) : null;
       if (endDate) endDate.setHours(23, 59, 59, 999);
 
-      filteredData = allData.filter(row => {
+      filteredDataServicios = dataServicios.filter(row => {
         if (comercial && row.comercial !== comercial) return false;
         if (startDate && row.fecha < startDate) return false;
         if (endDate && row.fecha > endDate) return false;
         return true;
       });
 
-      updateDashboard();
+      updateSection1();
     }
 
-    function resetFilters() {
-      document.getElementById('comercialFilter').value = '';
-      setDefaultDateRange();
-      filteredData = [...allData];
-      updateDashboard();
+    function resetFilters1() {
+      document.getElementById('comercialFilter1').value = '';
+      setDefaultDateRangeSection1();
+      filteredDataServicios = [...dataServicios];
+      updateSection1();
     }
 
     // ============================================================================
-    // DASHBOARD UPDATE
+    // SECTION 2: FILTERS
     // ============================================================================
-    function updateDashboard() {
-      updateKPIs();
-      updateHoursChart(hoursChartView);
+    function setDefaultDateRangeSection2() {
+      // Get date range from both CSV sources
+      let allDates = [];
+      if (dataServicios.length > 0) {
+        allDates = allDates.concat(dataServicios.map(row => row.fecha));
+      }
+      if (dataCompanias.length > 0) {
+        allDates = allDates.concat(dataCompanias.map(row => row.fecha));
+      }
+
+      if (allDates.length > 0) {
+        allDates.sort((a, b) => a - b);
+        const minDate = allDates[0];
+        const maxDate = allDates[allDates.length - 1];
+        document.getElementById('startDate2').value = formatDateForInput(minDate);
+        document.getElementById('endDate2').value = formatDateForInput(maxDate);
+
+        initializeFlatpickr('startDate2', 'endDate2', minDate, maxDate, applyFilters2);
+      }
+    }
+
+    function applyFilters2() {
+      const startDateVal = document.getElementById('startDate2').value;
+      const endDateVal = document.getElementById('endDate2').value;
+
+      const startDate = startDateVal ? new Date(startDateVal) : null;
+      const endDate = endDateVal ? new Date(endDateVal) : null;
+      if (endDate) endDate.setHours(23, 59, 59, 999);
+
+      // Filter Servicios data
+      if (dataServicios.length > 0) {
+        filteredDataServicios = dataServicios.filter(row => {
+          if (startDate && row.fecha < startDate) return false;
+          if (endDate && row.fecha > endDate) return false;
+          return true;
+        });
+      }
+
+      // Filter Companias data
+      if (dataCompanias.length > 0) {
+        filteredDataCompanias = dataCompanias.filter(row => {
+          if (startDate && row.fecha < startDate) return false;
+          if (endDate && row.fecha > endDate) return false;
+          return true;
+        });
+      }
+
+      updateSection2();
+    }
+
+    function resetFilters2() {
+      setDefaultDateRangeSection2();
+      filteredDataServicios = [...dataServicios];
+      filteredDataCompanias = [...dataCompanias];
+      updateSection2();
+    }
+
+    function initializeFlatpickr(startId, endId, minDate, maxDate, onChange) {
+      const key1 = `${startId}_fp`;
+      const key2 = `${endId}_fp`;
+
+      if (flatpickrInstances[key1]) flatpickrInstances[key1].destroy();
+      if (flatpickrInstances[key2]) flatpickrInstances[key2].destroy();
+
+      flatpickrInstances[key1] = flatpickr(`#${startId}`, {
+        dateFormat: 'Y-m-d',
+        minDate: minDate,
+        maxDate: maxDate,
+        locale: 'es',
+        onChange: onChange
+      });
+
+      flatpickrInstances[key2] = flatpickr(`#${endId}`, {
+        dateFormat: 'Y-m-d',
+        minDate: minDate,
+        maxDate: maxDate,
+        locale: 'es',
+        onChange: onChange
+      });
+    }
+
+    // ============================================================================
+    // SECTION 1: UPDATE
+    // ============================================================================
+    function updateSection1() {
+      updateSection1KPIs();
       updateRevenueChart(revenueChartView);
       updateEvolutionChart();
-      updateSeasonalityChart();
       updateComercialesCards();
-      updateEnfermerosCards();
     }
 
-    function updateKPIs() {
-      const totalIngresos = filteredData.reduce((sum, row) => sum + row.clienteVal, 0);
-      const totalPagado = filteredData.reduce((sum, row) => sum + row.companiaVal, 0);
-      const totalNeto = totalIngresos - totalPagado;
-      const margenNeto = totalIngresos > 0 ? (totalNeto / totalIngresos * 100) : 0;
+    function updateSection1KPIs() {
+      const totalIngresos = filteredDataServicios.reduce((sum, row) => sum + row.pagado, 0);
 
-      // Calculate LTV (total income / unique clients)
+      // Calculate LTV
       const clientTotals = {};
-      filteredData.forEach(row => {
+      filteredDataServicios.forEach(row => {
         if (row.cliente) {
-          clientTotals[row.cliente] = (clientTotals[row.cliente] || 0) + row.clienteVal;
+          clientTotals[row.cliente] = (clientTotals[row.cliente] || 0) + row.pagado;
         }
       });
 
       const uniqueClients = Object.keys(clientTotals).length;
       const ltvPromedio = uniqueClients > 0 ? totalIngresos / uniqueClients : 0;
 
-      // Get top 5 clients
+      // Top 5 clients
       const sortedClients = Object.entries(clientTotals)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5);
 
       document.getElementById('kpiLTV').textContent = formatCurrency(ltvPromedio);
-      document.getElementById('kpiTotalIngresos').textContent = formatCurrency(totalIngresos);
-      document.getElementById('kpiTotalPagado').textContent = formatCurrency(totalPagado);
-      document.getElementById('kpiTotalNeto').textContent = formatCurrency(totalNeto);
-      document.getElementById('kpiMargenNeto').textContent = margenNeto.toFixed(1) + '%';
+      document.getElementById('kpiTotalIngresos1').textContent = formatCurrency(totalIngresos);
 
-      // Display top 5 clients
       const top5Container = document.getElementById('top5Clientes');
       top5Container.innerHTML = sortedClients.map((client, index) =>
         `<div class="flex justify-between items-center py-1">
-          <span class="text-gray-600 dark:text-gray-400 truncate">${index + 1}. ${client[0]}</span>
-          <span class="font-semibold text-green-400 ml-2">${formatCurrency(client[1])}</span>
+          <span class="text-gray-600 dark:text-gray-400 truncate text-xs">${index + 1}. ${client[0]}</span>
+          <span class="font-semibold text-green-400 ml-2 text-xs">${formatCurrency(client[1])}</span>
         </div>`
       ).join('');
+    }
+
+    function updateComercialesCards() {
+      const comercialData = {};
+
+      filteredDataServicios.forEach(row => {
+        if (row.comercial) {
+          if (!comercialData[row.comercial]) {
+            comercialData[row.comercial] = { total: 0, horas: 0 };
+          }
+          comercialData[row.comercial].total += row.pagado;
+          comercialData[row.comercial].horas += row.horas;
+        }
+      });
+
+      const sorted = Object.entries(comercialData).sort((a, b) => b[1].total - a[1].total);
+
+      const container = document.getElementById('comercialesCards');
+      container.innerHTML = sorted.map(([comercial, data]) => `
+        <div class="glass-card rounded-xl p-3 hover:scale-105 transition-all">
+          <div class="icon-container p-2 rounded-lg mb-2 w-fit">
+            <i data-lucide="user" class="w-4 h-4 text-blue-400"></i>
+          </div>
+          <h4 class="font-semibold text-xs mb-1 truncate text-gray-900 dark:text-white">${comercial}</h4>
+          <p class="text-xl font-bold text-green-400 mb-1">${formatCurrency(data.total)}</p>
+          <p class="text-xs text-gray-600 dark:text-gray-400">${data.horas.toFixed(0)} horas</p>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // ============================================================================
+    // SECTION 2: UPDATE
+    // ============================================================================
+    function updateSection2() {
+      updateSection2KPIs();
+      updateHoursChart(hoursChartView);
+      updateSeasonalityChart();
+      updateEnfermerosCards();
+    }
+
+    function updateSection2KPIs() {
+      const totalIngresos = filteredDataServicios.reduce((sum, row) => sum + row.pagado, 0);
+      const totalPagado = filteredDataCompanias.reduce((sum, row) => sum + row.companiaVal, 0);
+      const totalNeto = totalIngresos - totalPagado;
+      const margenNeto = totalIngresos > 0 ? (totalNeto / totalIngresos * 100) : 0;
+
+      document.getElementById('kpiTotalIngresos2').textContent = formatCurrency(totalIngresos);
+      document.getElementById('kpiTotalPagado').textContent = formatCurrency(totalPagado);
+      document.getElementById('kpiTotalNeto').textContent = formatCurrency(totalNeto);
+      document.getElementById('kpiMargenNeto').textContent = margenNeto.toFixed(1) + '%';
+    }
+
+    function updateEnfermerosCards() {
+      const enfermeroData = {};
+
+      filteredDataCompanias.forEach(row => {
+        if (row.enfermero) {
+          if (!enfermeroData[row.enfermero]) {
+            enfermeroData[row.enfermero] = { servicios: 0, horas: 0 };
+          }
+          enfermeroData[row.enfermero].servicios += 1;
+          enfermeroData[row.enfermero].horas += row.horas;
+        }
+      });
+
+      const sorted = Object.entries(enfermeroData)
+        .sort((a, b) => b[1].servicios - a[1].servicios)
+        .slice(0, 8);
+
+      const container = document.getElementById('enfermerosCards');
+      container.innerHTML = sorted.map(([enfermero, data]) => `
+        <div class="glass-card rounded-xl p-3 hover:scale-105 transition-all">
+          <div class="icon-container p-2 rounded-lg mb-2 w-fit">
+            <i data-lucide="user-check" class="w-4 h-4 text-purple-400"></i>
+          </div>
+          <h4 class="font-semibold text-xs mb-1 truncate text-gray-900 dark:text-white">${enfermero}</h4>
+          <p class="text-xl font-bold text-blue-400 mb-1">${data.servicios} <span class="text-xs font-normal text-gray-600 dark:text-gray-400">servicios</span></p>
+          <p class="text-xs text-gray-600 dark:text-gray-400">${data.horas.toFixed(0)} horas</p>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
     }
 
     // ============================================================================
@@ -862,78 +1193,6 @@
     // ============================================================================
     let hoursChartView = 'week';
     let revenueChartView = 'week';
-
-    function updateHoursChart(view) {
-      const ctx = document.getElementById('hoursChart');
-      const data = view === 'week' ? getWeeklyHours() : getMonthlyHours();
-      const colors = getChartColors();
-
-      if (charts.hours) charts.hours.destroy();
-
-      charts.hours = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: data.labels,
-          datasets: [{
-            label: 'Horas',
-            data: data.values,
-            backgroundColor: 'rgba(99, 102, 241, 0.6)',
-            borderColor: 'rgb(99, 102, 241)',
-            borderWidth: 1,
-            borderRadius: 8
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              ticks: { color: colors.text, font: { size: 11 } },
-              grid: { color: colors.grid, drawBorder: false }
-            },
-            y: {
-              ticks: { color: colors.text, font: { size: 11 } },
-              grid: { color: colors.grid, drawBorder: false }
-            }
-          },
-          plugins: { legend: { display: false } }
-        }
-      });
-    }
-
-    function getWeeklyHours() {
-      const weeklyData = {};
-      filteredData.forEach(row => {
-        const weekNum = getWeekNumber(row.fecha);
-        const year = row.fecha.getFullYear();
-        const key = `${year}-S${weekNum}`;
-        weeklyData[key] = (weeklyData[key] || 0) + row.horas;
-      });
-
-      const sorted = Object.entries(weeklyData).sort();
-      return {
-        labels: sorted.map(([key]) => key),
-        values: sorted.map(([, value]) => value)
-      };
-    }
-
-    function getMonthlyHours() {
-      const monthlyData = {};
-      filteredData.forEach(row => {
-        const key = `${row.fecha.getFullYear()}-${String(row.fecha.getMonth() + 1).padStart(2, '0')}`;
-        monthlyData[key] = (monthlyData[key] || 0) + row.horas;
-      });
-
-      const sorted = Object.entries(monthlyData).sort();
-      const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-      return {
-        labels: sorted.map(([key]) => {
-          const [year, month] = key.split('-');
-          return `${monthNames[parseInt(month) - 1]} ${year}`;
-        }),
-        values: sorted.map(([, value]) => value)
-      };
-    }
 
     function updateRevenueChart(view) {
       const ctx = document.getElementById('revenueChart');
@@ -952,7 +1211,7 @@
             backgroundColor: 'rgba(34, 197, 94, 0.6)',
             borderColor: 'rgb(34, 197, 94)',
             borderWidth: 1,
-            borderRadius: 8
+            borderRadius: 6
           }]
         },
         options: {
@@ -960,13 +1219,13 @@
           maintainAspectRatio: false,
           scales: {
             x: {
-              ticks: { color: colors.text, font: { size: 11 } },
+              ticks: { color: colors.text, font: { size: 10 } },
               grid: { color: colors.grid, drawBorder: false }
             },
             y: {
               ticks: {
                 color: colors.text,
-                font: { size: 11 },
+                font: { size: 10 },
                 callback: function(value) {
                   return '$' + value.toLocaleString();
                 }
@@ -981,11 +1240,11 @@
 
     function getWeeklyRevenue() {
       const weeklyData = {};
-      filteredData.forEach(row => {
+      filteredDataServicios.forEach(row => {
         const weekNum = getWeekNumber(row.fecha);
         const year = row.fecha.getFullYear();
         const key = `${year}-S${weekNum}`;
-        weeklyData[key] = (weeklyData[key] || 0) + row.clienteVal;
+        weeklyData[key] = (weeklyData[key] || 0) + row.pagado;
       });
 
       const sorted = Object.entries(weeklyData).sort();
@@ -997,9 +1256,9 @@
 
     function getMonthlyRevenue() {
       const monthlyData = {};
-      filteredData.forEach(row => {
+      filteredDataServicios.forEach(row => {
         const key = `${row.fecha.getFullYear()}-${String(row.fecha.getMonth() + 1).padStart(2, '0')}`;
-        monthlyData[key] = (monthlyData[key] || 0) + row.clienteVal;
+        monthlyData[key] = (monthlyData[key] || 0) + row.pagado;
       });
 
       const sorted = Object.entries(monthlyData).sort();
@@ -1038,13 +1297,13 @@
           maintainAspectRatio: false,
           scales: {
             x: {
-              ticks: { color: colors.text, font: { size: 11 } },
+              ticks: { color: colors.text, font: { size: 10 } },
               grid: { color: colors.grid, drawBorder: false }
             },
             y: {
               ticks: {
                 color: colors.text,
-                font: { size: 11 },
+                font: { size: 10 },
                 callback: function(value) {
                   return '$' + value.toLocaleString();
                 }
@@ -1057,11 +1316,83 @@
       });
     }
 
+    function updateHoursChart(view) {
+      const ctx = document.getElementById('hoursChart');
+      const data = view === 'week' ? getWeeklyHours() : getMonthlyHours();
+      const colors = getChartColors();
+
+      if (charts.hours) charts.hours.destroy();
+
+      charts.hours = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: 'Horas',
+            data: data.values,
+            backgroundColor: 'rgba(99, 102, 241, 0.6)',
+            borderColor: 'rgb(99, 102, 241)',
+            borderWidth: 1,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: colors.text, font: { size: 10 } },
+              grid: { color: colors.grid, drawBorder: false }
+            },
+            y: {
+              ticks: { color: colors.text, font: { size: 10 } },
+              grid: { color: colors.grid, drawBorder: false }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    function getWeeklyHours() {
+      const weeklyData = {};
+      filteredDataCompanias.forEach(row => {
+        const weekNum = getWeekNumber(row.fecha);
+        const year = row.fecha.getFullYear();
+        const key = `${year}-S${weekNum}`;
+        weeklyData[key] = (weeklyData[key] || 0) + row.horas;
+      });
+
+      const sorted = Object.entries(weeklyData).sort();
+      return {
+        labels: sorted.map(([key]) => key),
+        values: sorted.map(([, value]) => value)
+      };
+    }
+
+    function getMonthlyHours() {
+      const monthlyData = {};
+      filteredDataCompanias.forEach(row => {
+        const key = `${row.fecha.getFullYear()}-${String(row.fecha.getMonth() + 1).padStart(2, '0')}`;
+        monthlyData[key] = (monthlyData[key] || 0) + row.horas;
+      });
+
+      const sorted = Object.entries(monthlyData).sort();
+      const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      return {
+        labels: sorted.map(([key]) => {
+          const [year, month] = key.split('-');
+          return `${monthNames[parseInt(month) - 1]} ${year}`;
+        }),
+        values: sorted.map(([, value]) => value)
+      };
+    }
+
     function updateSeasonalityChart() {
       const ctx = document.getElementById('seasonalityChart');
       const monthlyHours = {};
 
-      filteredData.forEach(row => {
+      filteredDataCompanias.forEach(row => {
         const month = row.fecha.getMonth();
         monthlyHours[month] = (monthlyHours[month] || 0) + row.horas;
       });
@@ -1082,7 +1413,7 @@
             backgroundColor: 'rgba(234, 179, 8, 0.6)',
             borderColor: 'rgb(234, 179, 8)',
             borderWidth: 1,
-            borderRadius: 8
+            borderRadius: 6
           }]
         },
         options: {
@@ -1090,82 +1421,17 @@
           maintainAspectRatio: false,
           scales: {
             x: {
-              ticks: { color: colors.text, font: { size: 11 } },
+              ticks: { color: colors.text, font: { size: 10 } },
               grid: { color: colors.grid, drawBorder: false }
             },
             y: {
-              ticks: { color: colors.text, font: { size: 11 } },
+              ticks: { color: colors.text, font: { size: 10 } },
               grid: { color: colors.grid, drawBorder: false }
             }
           },
           plugins: { legend: { display: false } }
         }
       });
-    }
-
-    // ============================================================================
-    // CARDS
-    // ============================================================================
-    function updateComercialesCards() {
-      const comercialData = {};
-
-      filteredData.forEach(row => {
-        if (row.comercial) {
-          if (!comercialData[row.comercial]) {
-            comercialData[row.comercial] = { total: 0, horas: 0 };
-          }
-          comercialData[row.comercial].total += row.clienteVal;
-          comercialData[row.comercial].horas += row.horas;
-        }
-      });
-
-      const sorted = Object.entries(comercialData).sort((a, b) => b[1].total - a[1].total);
-
-      const container = document.getElementById('comercialesCards');
-      container.innerHTML = sorted.map(([comercial, data]) => `
-        <div class="glass-card rounded-xl p-4 hover:scale-105 transition-all">
-          <div class="icon-container p-2 rounded-lg mb-3 w-fit">
-            <i data-lucide="user" class="w-5 h-5 text-blue-400"></i>
-          </div>
-          <h4 class="font-semibold text-sm mb-1 truncate text-gray-900 dark:text-white">${comercial}</h4>
-          <p class="text-2xl font-bold text-green-400 mb-1">${formatCurrency(data.total)}</p>
-          <p class="text-xs text-gray-600 dark:text-gray-400">${data.horas.toFixed(0)} horas totales</p>
-        </div>
-      `).join('');
-
-      lucide.createIcons();
-    }
-
-    function updateEnfermerosCards() {
-      const enfermeroData = {};
-
-      filteredData.forEach(row => {
-        if (row.compania) {
-          if (!enfermeroData[row.compania]) {
-            enfermeroData[row.compania] = { servicios: 0, horas: 0 };
-          }
-          enfermeroData[row.compania].servicios += 1;
-          enfermeroData[row.compania].horas += row.horas;
-        }
-      });
-
-      const sorted = Object.entries(enfermeroData)
-        .sort((a, b) => b[1].servicios - a[1].servicios)
-        .slice(0, 8);
-
-      const container = document.getElementById('enfermerosCards');
-      container.innerHTML = sorted.map(([enfermero, data]) => `
-        <div class="glass-card rounded-xl p-4 hover:scale-105 transition-all">
-          <div class="icon-container p-2 rounded-lg mb-3 w-fit">
-            <i data-lucide="user-check" class="w-5 h-5 text-purple-400"></i>
-          </div>
-          <h4 class="font-semibold text-sm mb-1 truncate text-gray-900 dark:text-white">${enfermero}</h4>
-          <p class="text-2xl font-bold text-blue-400 mb-1">${data.servicios} <span class="text-xs font-normal text-gray-600 dark:text-gray-400">servicios</span></p>
-          <p class="text-xs text-gray-600 dark:text-gray-400">${data.horas.toFixed(0)} horas trabajadas</p>
-        </div>
-      `).join('');
-
-      lucide.createIcons();
     }
 
     // ============================================================================
@@ -1177,45 +1443,28 @@
       // Theme toggle
       document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
-      // File input
-      document.getElementById('csvFileInput').addEventListener('change', (e) => {
-        handleFileUpload(e.target.files[0]);
+      // File inputs
+      document.getElementById('csvServiciosInput').addEventListener('change', (e) => {
+        handleServiciosUpload(e.target.files[0]);
       });
 
-      // Upload zone click
-      document.getElementById('uploadZone').addEventListener('click', () => {
-        document.getElementById('csvFileInput').click();
+      document.getElementById('csvCompaniasInput').addEventListener('change', (e) => {
+        handleCompaniasUpload(e.target.files[0]);
       });
 
-      // Drag & drop
-      const uploadZone = document.getElementById('uploadZone');
-      uploadZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadZone.style.transform = 'scale(1.02)';
-      });
+      // Section 1 filters
+      document.getElementById('comercialFilter1').addEventListener('change', applyFilters1);
+      document.getElementById('resetFilters1').addEventListener('click', resetFilters1);
 
-      uploadZone.addEventListener('dragleave', () => {
-        uploadZone.style.transform = '';
-      });
-
-      uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.style.transform = '';
-        handleFileUpload(e.dataTransfer.files[0]);
-      });
-
-      // Filters - Auto-apply on change
-      document.getElementById('comercialFilter').addEventListener('change', applyFilters);
-      document.getElementById('resetFilters').addEventListener('click', resetFilters);
-      // Note: Date inputs handle auto-apply via Flatpickr onChange
+      // Section 2 filters
+      document.getElementById('resetFilters2').addEventListener('click', resetFilters2);
 
       // Toggle buttons for hours chart
       document.querySelectorAll('.toggle-hours').forEach(btn => {
         btn.addEventListener('click', function() {
           document.querySelectorAll('.toggle-hours').forEach(b => {
-            b.classList.remove('toggle-active');
+            b.classList.remove('toggle-active', 'text-white');
             b.classList.add('glass-card', 'text-gray-900', 'dark:text-white');
-            b.classList.remove('text-white');
           });
           this.classList.add('toggle-active', 'text-white');
           this.classList.remove('glass-card', 'text-gray-900', 'dark:text-white');
@@ -1228,9 +1477,8 @@
       document.querySelectorAll('.toggle-revenue').forEach(btn => {
         btn.addEventListener('click', function() {
           document.querySelectorAll('.toggle-revenue').forEach(b => {
-            b.classList.remove('toggle-active');
+            b.classList.remove('toggle-active', 'text-white');
             b.classList.add('glass-card', 'text-gray-900', 'dark:text-white');
-            b.classList.remove('text-white');
           });
           this.classList.add('toggle-active', 'text-white');
           this.classList.remove('glass-card', 'text-gray-900', 'dark:text-white');
