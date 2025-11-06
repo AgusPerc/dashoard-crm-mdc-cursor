@@ -163,20 +163,15 @@
       background: rgba(245, 245, 245, 0.9);
     }
 
-    html:not(.dark) .flatpickr-current-month .flatpickr-monthDropdown-months,
     html:not(.dark) .flatpickr-current-month input.cur-year {
       color: #1e293b;
       font-weight: 600;
     }
 
-    /* Dropdown background for light mode */
-    html:not(.dark) .flatpickr-monthDropdown-months {
-      background: rgba(255, 255, 255, 0.95);
-    }
-
-    html:not(.dark) .flatpickr-monthDropdown-months option {
-      background: rgba(255, 255, 255, 0.95);
+    /* Dropdown text always dark for native browser background */
+    html:not(.dark) .flatpickr-current-month .flatpickr-monthDropdown-months {
       color: #1e293b;
+      font-weight: 600;
     }
 
     html:not(.dark) .flatpickr-weekday {
@@ -215,9 +210,10 @@
       background: rgba(40, 40, 40, 0.9);
     }
 
+    /* Dropdown text always dark for native browser background */
     .dark .flatpickr-current-month .flatpickr-monthDropdown-months,
     .dark .flatpickr-current-month input.cur-year {
-      color: #f1f5f9;
+      color: #1e293b;
       font-weight: 600;
     }
 
