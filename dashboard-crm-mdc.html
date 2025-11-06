@@ -169,6 +169,16 @@
       font-weight: 600;
     }
 
+    /* Dropdown background for light mode */
+    html:not(.dark) .flatpickr-monthDropdown-months {
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    html:not(.dark) .flatpickr-monthDropdown-months option {
+      background: rgba(255, 255, 255, 0.95);
+      color: #1e293b;
+    }
+
     html:not(.dark) .flatpickr-weekday {
       color: #475569;
     }
@@ -209,6 +219,16 @@
     .dark .flatpickr-current-month input.cur-year {
       color: #f1f5f9;
       font-weight: 600;
+    }
+
+    /* Dropdown background fix for dark mode */
+    .dark .flatpickr-monthDropdown-months {
+      background: rgba(30, 30, 30, 0.95);
+    }
+
+    .dark .flatpickr-monthDropdown-months option {
+      background: rgba(30, 30, 30, 0.95);
+      color: #f1f5f9;
     }
 
     .dark .flatpickr-weekday {
