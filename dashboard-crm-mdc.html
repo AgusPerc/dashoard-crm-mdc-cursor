@@ -715,8 +715,16 @@
       if (!val) return null;
       const str = String(val).trim();
 
+      // YYYY-MM-DD (ISO format from Papa Parse)
+      let match = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+      if (match) {
+        const [, y, m, d] = match;
+        const date = new Date(y, m - 1, d);
+        if (!isNaN(date)) return date;
+      }
+
       // DD/MM/YYYY HH:MM
-      let match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{1,2})$/);
+      match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{1,2})$/);
       if (match) {
         const [, d, m, y] = match;
         const date = new Date(y, m - 1, d);
