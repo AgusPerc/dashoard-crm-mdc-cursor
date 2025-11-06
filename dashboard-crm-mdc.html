@@ -719,24 +719,24 @@
       let match = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
       if (match) {
         const [, y, m, d] = match;
-        const date = new Date(y, m - 1, d);
-        if (!isNaN(date)) return date;
+        const date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+        if (!isNaN(date.getTime())) return date;
       }
 
       // DD/MM/YYYY HH:MM
       match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{1,2})$/);
       if (match) {
         const [, d, m, y] = match;
-        const date = new Date(y, m - 1, d);
-        if (!isNaN(date)) return date;
+        const date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+        if (!isNaN(date.getTime())) return date;
       }
 
       // DD/MM/YYYY
       match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
       if (match) {
         const [, d, m, y] = match;
-        const date = new Date(y, m - 1, d);
-        if (!isNaN(date)) return date;
+        const date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+        if (!isNaN(date.getTime())) return date;
       }
 
       return null;
