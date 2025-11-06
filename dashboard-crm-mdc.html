@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard CRM - Mi Dulce Compañía</title>
+
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* Body and Font */
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Glass Cards - Dark Mode */
+    .glass-card {
+      background: rgba(30, 30, 30, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Glass Sidebar */
+    .glass-sidebar {
+      background: rgba(30, 30, 30, 0.8);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Glass Input */
+    .glass-input {
+      background: rgba(30, 30, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .glass-input:focus-within {
+      border-color: rgba(99, 102, 241, 0.6);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+
+    /* Icon Container */
+    .icon-container {
+      background: rgba(40, 40, 40, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .icon-container:hover {
+      background: rgba(50, 50, 50, 0.9);
+      transform: scale(1.05);
+    }
+
+    /* Animations */
+    @keyframes fade-in {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes slide-up {
+      0% { opacity: 0; transform: translateY(30px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes slide-in-left {
+      0% { opacity: 0; transform: translateX(-40px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slide-in-right {
+      0% { opacity: 0; transform: translateX(40px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    .animate-fade-in {
+      animation: fade-in 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+    .animate-slide-up {
+      animation: slide-up 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+    .animate-slide-left {
+      animation: slide-in-left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+    .animate-slide-right {
+      animation: slide-in-right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    /* Light Mode Overrides */
+    html:not(.dark) .glass-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    html:not(.dark) .glass-card:hover {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+      border-color: rgba(0, 0, 0, 0.15);
+    }
+
+    html:not(.dark) .glass-sidebar {
+      background: rgba(255, 255, 255, 0.9);
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    html:not(.dark) .glass-input {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    html:not(.dark) .icon-container {
+      background: rgba(245, 245, 245, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    html:not(.dark) ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Chart container */
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+
+    /* Toggle button active state */
+    .toggle-active {
+      background: linear-gradient(to right, rgb(99, 102, 241), rgb(168, 85, 247));
+      color: white;
+    }
+  </style>
+</head>
+<body class="overflow-x-hidden">
+  <!-- Background Layer -->
+  <div id="bgLayer" class="fixed inset-0 -z-10 transition-colors duration-500" style="background-color: #0a0a0a;"></div>
+
+  <!-- Sidebar -->
+  <aside class="glass-sidebar fixed left-0 top-0 h-full w-64 p-6 flex flex-col animate-slide-left z-50">
+    <!-- Logo/Header -->
+    <div class="flex items-center gap-3 mb-8">
+      <div class="icon-container p-2 rounded-xl">
+        <i data-lucide="activity" class="w-6 h-6 text-blue-400"></i>
+      </div>
+      <div>
+        <h2 class="text-lg font-bold">Mi Dulce Compañía</h2>
+        <p class="text-xs text-gray-400">Dashboard CRM</p>
+      </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="flex-1 space-y-2">
+      <a href="#overview" class="flex items-center gap-3 px-4 py-3 rounded-xl glass-card transition-all duration-200">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span>Resumen</span>
+      </a>
+      <a href="#analytics" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all duration-200">
+        <i data-lucide="bar-chart" class="w-5 h-5"></i>
+        <span>Análisis</span>
+      </a>
+      <a href="#comercial" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all duration-200">
+        <i data-lucide="users" class="w-5 h-5"></i>
+        <span>Comerciales</span>
+      </a>
+      <a href="#enfermeros" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all duration-200">
+        <i data-lucide="user-check" class="w-5 h-5"></i>
+        <span>Enfermeros</span>
+      </a>
+    </nav>
+
+    <!-- Theme Toggle at Bottom -->
+    <button id="themeToggle" class="glass-card p-3 rounded-xl hover:scale-105 transition-all duration-200 w-full flex items-center justify-center gap-2">
+      <i data-lucide="moon" class="w-5 h-5 dark-icon hidden dark:block"></i>
+      <i data-lucide="sun" class="w-5 h-5 light-icon block dark:hidden"></i>
+      <span>Cambiar Tema</span>
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="ml-64 p-6 md:p-8">
+    <!-- Header -->
+    <header class="mb-8 animate-fade-in">
+      <h1 class="text-3xl md:text-4xl font-bold mb-2">Dashboard CRM</h1>
+      <p class="text-gray-400">Análisis completo de servicios y rendimiento</p>
+    </header>
+
+    <!-- Upload CSV Section -->
+    <section id="uploadSection" class="mb-8 animate-slide-up">
+      <div class="glass-card rounded-2xl p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="icon-container p-2 rounded-xl">
+            <i data-lucide="upload" class="w-5 h-5 text-blue-400"></i>
+          </div>
+          <h2 class="text-xl font-semibold">Cargar Datos CSV</h2>
+        </div>
+        <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
+          <label for="csvFile" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl font-medium hover:scale-105 transition-all duration-200 cursor-pointer">
+            <input type="file" id="csvFile" accept=".csv" class="hidden">
+            Seleccionar Archivo CSV
+          </label>
+          <div id="fileInfo" class="text-sm text-gray-400"></div>
+        </div>
+        <div id="uploadStatus" class="mt-4 text-sm"></div>
+      </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section id="filtersSection" class="mb-8 animate-slide-up hidden">
+      <div class="glass-card rounded-2xl p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="icon-container p-2 rounded-xl">
+            <i data-lucide="filter" class="w-5 h-5 text-purple-400"></i>
+          </div>
+          <h2 class="text-xl font-semibold">Filtros</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Comercial Filter -->
+          <div>
+            <label class="block text-sm font-medium mb-2">Comercial</label>
+            <select id="comercialFilter" class="glass-input w-full px-4 py-2 rounded-xl text-sm focus:outline-none">
+              <option value="">Todos los comerciales</option>
+            </select>
+          </div>
+          <!-- Date Range Filters -->
+          <div>
+            <label class="block text-sm font-medium mb-2">Fecha Inicio</label>
+            <input type="date" id="startDate" class="glass-input w-full px-4 py-2 rounded-xl text-sm focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Fecha Fin</label>
+            <input type="date" id="endDate" class="glass-input w-full px-4 py-2 rounded-xl text-sm focus:outline-none">
+          </div>
+        </div>
+        <div class="mt-4 flex gap-3">
+          <button id="applyFilters" class="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl font-medium hover:scale-105 transition-all duration-200">
+            Aplicar Filtros
+          </button>
+          <button id="resetFilters" class="px-6 py-2 glass-card rounded-xl font-medium hover:scale-105 transition-all duration-200">
+            Resetear
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- KPIs Section -->
+    <section id="kpisSection" class="mb-8 hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-slide-up">
+        <!-- KPI 1: LTV Promedio -->
+        <div class="glass-card rounded-2xl p-5 md:p-6">
+          <div class="flex items-center justify-between mb-3">
+            <div class="icon-container p-3 rounded-xl">
+              <i data-lucide="trending-up" class="w-6 h-6 text-blue-400"></i>
+            </div>
+          </div>
+          <h3 class="text-2xl md:text-3xl font-bold mb-1" id="kpiLTV">$0</h3>
+          <p class="text-xs md:text-sm text-gray-400">LTV Promedio</p>
+        </div>
+
+        <!-- KPI 2: Total Ingresos -->
+        <div class="glass-card rounded-2xl p-5 md:p-6">
+          <div class="flex items-center justify-between mb-3">
+            <div class="icon-container p-3 rounded-xl">
+              <i data-lucide="dollar-sign" class="w-6 h-6 text-green-400"></i>
+            </div>
+          </div>
+          <h3 class="text-2xl md:text-3xl font-bold mb-1" id="kpiTotalIngresos">$0</h3>
+          <p class="text-xs md:text-sm text-gray-400">Total Ingresos</p>
+        </div>
+
+        <!-- KPI 3: Total Pagado -->
+        <div class="glass-card rounded-2xl p-5 md:p-6">
+          <div class="flex items-center justify-between mb-3">
+            <div class="icon-container p-3 rounded-xl">
+              <i data-lucide="credit-card" class="w-6 h-6 text-red-400"></i>
+            </div>
+          </div>
+          <h3 class="text-2xl md:text-3xl font-bold mb-1" id="kpiTotalPagado">$0</h3>
+          <p class="text-xs md:text-sm text-gray-400">Total Pagado a Enfermeros</p>
+        </div>
+
+        <!-- KPI 4: Total Neto -->
+        <div class="glass-card rounded-2xl p-5 md:p-6">
+          <div class="flex items-center justify-between mb-3">
+            <div class="icon-container p-3 rounded-xl">
+              <i data-lucide="wallet" class="w-6 h-6 text-purple-400"></i>
+            </div>
+          </div>
+          <h3 class="text-2xl md:text-3xl font-bold mb-1" id="kpiTotalNeto">$0</h3>
+          <p class="text-xs md:text-sm text-gray-400">Total Neto</p>
+        </div>
+
+        <!-- KPI 5: % Margen Neto -->
+        <div class="glass-card rounded-2xl p-5 md:p-6">
+          <div class="flex items-center justify-between mb-3">
+            <div class="icon-container p-3 rounded-xl">
+              <i data-lucide="percent" class="w-6 h-6 text-yellow-400"></i>
+            </div>
+          </div>
+          <h3 class="text-2xl md:text-3xl font-bold mb-1" id="kpiMargenNeto">0%</h3>
+          <p class="text-xs md:text-sm text-gray-400">% Margen Neto</p>
+        </div>
+
+        <!-- KPI 6: Top 5 Clientes -->
+        <div class="glass-card rounded-2xl p-5 md:p-6">
+          <div class="flex items-center justify-between mb-3">
+            <div class="icon-container p-3 rounded-xl">
+              <i data-lucide="users" class="w-6 h-6 text-indigo-400"></i>
+            </div>
+          </div>
+          <h3 class="text-sm font-semibold mb-2">Top 5 Clientes</h3>
+          <div id="top5Clientes" class="space-y-1 text-xs">
+            <!-- Top 5 will be populated here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Section: Hours & Revenue with Toggle -->
+    <section id="chartsSection" class="mb-8 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Hours Chart -->
+        <div class="glass-card rounded-2xl p-6 animate-slide-up">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Horas Trabajadas</h3>
+            <div class="flex gap-2">
+              <button class="toggle-hours px-3 py-1 rounded-lg text-sm transition-all toggle-active" data-view="week">Semanas</button>
+              <button class="toggle-hours px-3 py-1 rounded-lg text-sm transition-all glass-card" data-view="month">Meses</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="hoursChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Revenue Chart -->
+        <div class="glass-card rounded-2xl p-6 animate-slide-up">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Ingresos</h3>
+            <div class="flex gap-2">
+              <button class="toggle-revenue px-3 py-1 rounded-lg text-sm transition-all toggle-active" data-view="week">Semanas</button>
+              <button class="toggle-revenue px-3 py-1 rounded-lg text-sm transition-all glass-card" data-view="month">Meses</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Evolution Chart -->
+        <div class="glass-card rounded-2xl p-6 animate-slide-up">
+          <h3 class="text-lg font-semibold mb-4">Evolución de Ingresos (Mensual)</h3>
+          <div class="chart-container">
+            <canvas id="evolutionChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Seasonality Chart -->
+        <div class="glass-card rounded-2xl p-6 animate-slide-up">
+          <h3 class="text-lg font-semibold mb-4">Estacionalidad por Mes</h3>
+          <div class="chart-container">
+            <canvas id="seasonalityChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comerciales Cards Section -->
+    <section id="comercialesSection" class="mb-8 hidden">
+      <div class="glass-card rounded-2xl p-6 mb-4">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="icon-container p-2 rounded-xl">
+            <i data-lucide="users" class="w-5 h-5 text-blue-400"></i>
+          </div>
+          <h2 class="text-xl font-semibold">Total Vendido por Comercial</h2>
+        </div>
+        <div id="comercialesCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Cards will be populated here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Enfermeros Cards Section -->
+    <section id="enfermerosSection" class="mb-8 hidden">
+      <div class="glass-card rounded-2xl p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="icon-container p-2 rounded-xl">
+            <i data-lucide="user-check" class="w-5 h-5 text-purple-400"></i>
+          </div>
+          <h2 class="text-xl font-semibold">Top Enfermeros Más Utilizados</h2>
+        </div>
+        <div id="enfermerosCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Cards will be populated here -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Global variables
+    let rawData = [];
+    let filteredData = [];
+    let charts = {};
+
+    // Theme Management
+    function initTheme() {
+      const theme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+      updateBackground();
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateBackground();
+
+      // Update all charts with new theme colors
+      Object.values(charts).forEach(chart => {
+        if (chart) {
+          updateChartTheme(chart);
+          chart.update();
+        }
+      });
+    }
+
+    function updateBackground() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const bgLayer = document.getElementById('bgLayer');
+      if (bgLayer) {
+        bgLayer.style.backgroundColor = isDark ? '#0a0a0a' : '#f5f5f5';
+      }
+    }
+
+    function getChartColors() {
+      const isDark = document.documentElement.classList.contains('dark');
+      return {
+        text: isDark ? '#e5e7eb' : '#374151',
+        grid: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+        primary: 'rgb(99, 102, 241)',
+        secondary: 'rgb(168, 85, 247)',
+      };
+    }
+
+    function updateChartTheme(chart) {
+      const colors = getChartColors();
+      chart.options.scales.x.ticks.color = colors.text;
+      chart.options.scales.y.ticks.color = colors.text;
+      chart.options.scales.x.grid.color = colors.grid;
+      chart.options.scales.y.grid.color = colors.grid;
+    }
+
+    // CSV Upload Handler
+    document.getElementById('csvFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('fileInfo').textContent = `Archivo: ${file.name}`;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const content = e.target.result;
+          parseCSV(content);
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    // Parse CSV
+    function parseCSV(content) {
+      try {
+        const lines = content.split('\n');
+        const headers = lines[0].split(/,|\t/).map(h => h.trim());
+
+        rawData = [];
+        for (let i = 1; i < lines.length; i++) {
+          if (lines[i].trim() === '') continue;
+
+          const values = lines[i].split(/,|\t/).map(v => v.trim());
+          const row = {};
+
+          headers.forEach((header, index) => {
+            row[header] = values[index] || '';
+          });
+
+          // Parse numeric values
+          row['$ Cliente'] = parseFloat(row['$ Cliente']?.replace(/[^0-9.-]/g, '') || 0);
+          row['$ Compañia'] = parseFloat(row['$ Compañia']?.replace(/[^0-9.-]/g, '') || 0);
+          row['HORAS'] = parseFloat(row['HORAS'] || 0);
+
+          // Parse dates (DD/MM/YYYY HH:MM)
+          if (row['CHECK-in']) {
+            const [datePart, timePart] = row['CHECK-in'].split(' ');
+            const [day, month, year] = datePart.split('/');
+            row.checkInDate = new Date(year, month - 1, day);
+          }
+
+          // Split comerciales with /
+          if (row['COMERCIAL'] && row['COMERCIAL'].includes('/')) {
+            const comerciales = row['COMERCIAL'].split('/').map(c => c.trim());
+            // Create separate entries for each comercial
+            comerciales.forEach(comercial => {
+              rawData.push({...row, COMERCIAL: comercial});
+            });
+          } else {
+            rawData.push(row);
+          }
+        }
+
+        filteredData = [...rawData];
+
+        document.getElementById('uploadStatus').innerHTML =
+          `<span class="text-green-400">✓ Archivo cargado exitosamente. ${rawData.length} registros procesados.</span>`;
+
+        // Show filters and sections
+        document.getElementById('filtersSection').classList.remove('hidden');
+        document.getElementById('kpisSection').classList.remove('hidden');
+        document.getElementById('chartsSection').classList.remove('hidden');
+        document.getElementById('comercialesSection').classList.remove('hidden');
+        document.getElementById('enfermerosSection').classList.remove('hidden');
+
+        // Populate comercial filter
+        populateComercialFilter();
+
+        // Set default date range
+        setDefaultDateRange();
+
+        // Calculate and display data
+        updateDashboard();
+
+      } catch (error) {
+        document.getElementById('uploadStatus').innerHTML =
+          `<span class="text-red-400">✗ Error al procesar el archivo: ${error.message}</span>`;
+      }
+    }
+
+    // Populate comercial filter
+    function populateComercialFilter() {
+      const comerciales = [...new Set(rawData.map(row => row.COMERCIAL).filter(c => c))];
+      const select = document.getElementById('comercialFilter');
+      select.innerHTML = '<option value="">Todos los comerciales</option>';
+      comerciales.forEach(comercial => {
+        const option = document.createElement('option');
+        option.value = comercial;
+        option.textContent = comercial;
+        select.appendChild(option);
+      });
+    }
+
+    // Set default date range
+    function setDefaultDateRange() {
+      const dates = rawData.map(row => row.checkInDate).filter(d => d);
+      if (dates.length > 0) {
+        const minDate = new Date(Math.min(...dates));
+        const maxDate = new Date(Math.max(...dates));
+
+        document.getElementById('startDate').valueAsDate = minDate;
+        document.getElementById('endDate').valueAsDate = maxDate;
+      }
+    }
+
+    // Apply filters
+    document.getElementById('applyFilters').addEventListener('click', function() {
+      const comercial = document.getElementById('comercialFilter').value;
+      const startDate = document.getElementById('startDate').valueAsDate;
+      const endDate = document.getElementById('endDate').valueAsDate;
+
+      filteredData = rawData.filter(row => {
+        let match = true;
+
+        if (comercial && row.COMERCIAL !== comercial) {
+          match = false;
+        }
+
+        if (startDate && row.checkInDate < startDate) {
+          match = false;
+        }
+
+        if (endDate && row.checkInDate > endDate) {
+          match = false;
+        }
+
+        return match;
+      });
+
+      updateDashboard();
+    });
+
+    // Reset filters
+    document.getElementById('resetFilters').addEventListener('click', function() {
+      document.getElementById('comercialFilter').value = '';
+      setDefaultDateRange();
+      filteredData = [...rawData];
+      updateDashboard();
+    });
+
+    // Update entire dashboard
+    function updateDashboard() {
+      updateKPIs();
+      updateCharts();
+      updateComercialesCards();
+      updateEnfermerosCards();
+    }
+
+    // Update KPIs
+    function updateKPIs() {
+      const totalIngresos = filteredData.reduce((sum, row) => sum + row['$ Cliente'], 0);
+      const totalPagado = filteredData.reduce((sum, row) => sum + row['$ Compañia'], 0);
+      const totalNeto = totalIngresos - totalPagado;
+      const margenNeto = totalIngresos > 0 ? (totalNeto / totalIngresos * 100) : 0;
+
+      // Calculate LTV (average per unique client)
+      const clientTotals = {};
+      filteredData.forEach(row => {
+        const cliente = row.CLIENTE;
+        if (cliente) {
+          clientTotals[cliente] = (clientTotals[cliente] || 0) + row['$ Cliente'];
+        }
+      });
+      const ltvPromedio = Object.values(clientTotals).length > 0
+        ? Object.values(clientTotals).reduce((a, b) => a + b, 0) / Object.values(clientTotals).length
+        : 0;
+
+      // Get top 5 clients
+      const sortedClients = Object.entries(clientTotals)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+      document.getElementById('kpiLTV').textContent = formatCurrency(ltvPromedio);
+      document.getElementById('kpiTotalIngresos').textContent = formatCurrency(totalIngresos);
+      document.getElementById('kpiTotalPagado').textContent = formatCurrency(totalPagado);
+      document.getElementById('kpiTotalNeto').textContent = formatCurrency(totalNeto);
+      document.getElementById('kpiMargenNeto').textContent = margenNeto.toFixed(1) + '%';
+
+      // Display top 5 clients
+      const top5Container = document.getElementById('top5Clientes');
+      top5Container.innerHTML = sortedClients.map((client, index) =>
+        `<div class="flex justify-between items-center py-1">
+          <span class="text-gray-400">${index + 1}. ${client[0]}</span>
+          <span class="font-semibold text-green-400">${formatCurrency(client[1])}</span>
+        </div>`
+      ).join('');
+    }
+
+    // Format currency
+    function formatCurrency(value) {
+      return new Intl.NumberFormat('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+      }).format(value);
+    }
+
+    // Update all charts
+    function updateCharts() {
+      updateHoursChart('week');
+      updateRevenueChart('week');
+      updateEvolutionChart();
+      updateSeasonalityChart();
+    }
+
+    // Hours Chart
+    let hoursChartView = 'week';
+    document.querySelectorAll('.toggle-hours').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.toggle-hours').forEach(b => {
+          b.classList.remove('toggle-active');
+          b.classList.add('glass-card');
+        });
+        this.classList.add('toggle-active');
+        this.classList.remove('glass-card');
+        hoursChartView = this.dataset.view;
+        updateHoursChart(hoursChartView);
+      });
+    });
+
+    function updateHoursChart(view) {
+      const ctx = document.getElementById('hoursChart');
+      const data = view === 'week' ? getWeeklyHours() : getMonthlyHours();
+      const colors = getChartColors();
+
+      if (charts.hours) {
+        charts.hours.destroy();
+      }
+
+      charts.hours = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: 'Horas',
+            data: data.values,
+            backgroundColor: 'rgba(99, 102, 241, 0.6)',
+            borderColor: 'rgb(99, 102, 241)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: colors.text },
+              grid: { color: colors.grid }
+            },
+            y: {
+              ticks: { color: colors.text },
+              grid: { color: colors.grid }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    function getWeeklyHours() {
+      const weeklyData = {};
+      filteredData.forEach(row => {
+        if (row.checkInDate) {
+          const weekNum = getWeekNumber(row.checkInDate);
+          const year = row.checkInDate.getFullYear();
+          const key = `${year}-S${weekNum}`;
+          weeklyData[key] = (weeklyData[key] || 0) + row.HORAS;
+        }
+      });
+
+      const sorted = Object.entries(weeklyData).sort();
+      return {
+        labels: sorted.map(([key]) => key),
+        values: sorted.map(([, value]) => value)
+      };
+    }
+
+    function getMonthlyHours() {
+      const monthlyData = {};
+      filteredData.forEach(row => {
+        if (row.checkInDate) {
+          const key = `${row.checkInDate.getFullYear()}-${String(row.checkInDate.getMonth() + 1).padStart(2, '0')}`;
+          monthlyData[key] = (monthlyData[key] || 0) + row.HORAS;
+        }
+      });
+
+      const sorted = Object.entries(monthlyData).sort();
+      return {
+        labels: sorted.map(([key]) => {
+          const [year, month] = key.split('-');
+          const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+          return `${monthNames[parseInt(month) - 1]} ${year}`;
+        }),
+        values: sorted.map(([, value]) => value)
+      };
+    }
+
+    // Revenue Chart
+    let revenueChartView = 'week';
+    document.querySelectorAll('.toggle-revenue').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.toggle-revenue').forEach(b => {
+          b.classList.remove('toggle-active');
+          b.classList.add('glass-card');
+        });
+        this.classList.add('toggle-active');
+        this.classList.remove('glass-card');
+        revenueChartView = this.dataset.view;
+        updateRevenueChart(revenueChartView);
+      });
+    });
+
+    function updateRevenueChart(view) {
+      const ctx = document.getElementById('revenueChart');
+      const data = view === 'week' ? getWeeklyRevenue() : getMonthlyRevenue();
+      const colors = getChartColors();
+
+      if (charts.revenue) {
+        charts.revenue.destroy();
+      }
+
+      charts.revenue = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: 'Ingresos',
+            data: data.values,
+            backgroundColor: 'rgba(34, 197, 94, 0.6)',
+            borderColor: 'rgb(34, 197, 94)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: colors.text },
+              grid: { color: colors.grid }
+            },
+            y: {
+              ticks: {
+                color: colors.text,
+                callback: function(value) {
+                  return '$' + value.toLocaleString();
+                }
+              },
+              grid: { color: colors.grid }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    function getWeeklyRevenue() {
+      const weeklyData = {};
+      filteredData.forEach(row => {
+        if (row.checkInDate) {
+          const weekNum = getWeekNumber(row.checkInDate);
+          const year = row.checkInDate.getFullYear();
+          const key = `${year}-S${weekNum}`;
+          weeklyData[key] = (weeklyData[key] || 0) + row['$ Cliente'];
+        }
+      });
+
+      const sorted = Object.entries(weeklyData).sort();
+      return {
+        labels: sorted.map(([key]) => key),
+        values: sorted.map(([, value]) => value)
+      };
+    }
+
+    function getMonthlyRevenue() {
+      const monthlyData = {};
+      filteredData.forEach(row => {
+        if (row.checkInDate) {
+          const key = `${row.checkInDate.getFullYear()}-${String(row.checkInDate.getMonth() + 1).padStart(2, '0')}`;
+          monthlyData[key] = (monthlyData[key] || 0) + row['$ Cliente'];
+        }
+      });
+
+      const sorted = Object.entries(monthlyData).sort();
+      return {
+        labels: sorted.map(([key]) => {
+          const [year, month] = key.split('-');
+          const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+          return `${monthNames[parseInt(month) - 1]} ${year}`;
+        }),
+        values: sorted.map(([, value]) => value)
+      };
+    }
+
+    // Evolution Chart
+    function updateEvolutionChart() {
+      const ctx = document.getElementById('evolutionChart');
+      const data = getMonthlyRevenue();
+      const colors = getChartColors();
+
+      if (charts.evolution) {
+        charts.evolution.destroy();
+      }
+
+      charts.evolution = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: 'Ingresos',
+            data: data.values,
+            borderColor: 'rgb(168, 85, 247)',
+            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: colors.text },
+              grid: { color: colors.grid }
+            },
+            y: {
+              ticks: {
+                color: colors.text,
+                callback: function(value) {
+                  return '$' + value.toLocaleString();
+                }
+              },
+              grid: { color: colors.grid }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    // Seasonality Chart
+    function updateSeasonalityChart() {
+      const ctx = document.getElementById('seasonalityChart');
+      const monthlyServices = {};
+
+      filteredData.forEach(row => {
+        if (row.checkInDate) {
+          const month = row.checkInDate.getMonth();
+          monthlyServices[month] = (monthlyServices[month] || 0) + 1;
+        }
+      });
+
+      const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      const data = monthNames.map((name, index) => monthlyServices[index] || 0);
+      const colors = getChartColors();
+
+      if (charts.seasonality) {
+        charts.seasonality.destroy();
+      }
+
+      charts.seasonality = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: monthNames,
+          datasets: [{
+            label: 'Servicios',
+            data: data,
+            backgroundColor: 'rgba(234, 179, 8, 0.6)',
+            borderColor: 'rgb(234, 179, 8)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: colors.text },
+              grid: { color: colors.grid }
+            },
+            y: {
+              ticks: { color: colors.text },
+              grid: { color: colors.grid }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    // Update Comerciales Cards
+    function updateComercialesCards() {
+      const comercialData = {};
+
+      filteredData.forEach(row => {
+        const comercial = row.COMERCIAL;
+        if (comercial) {
+          if (!comercialData[comercial]) {
+            comercialData[comercial] = {
+              total: 0,
+              servicios: 0
+            };
+          }
+          comercialData[comercial].total += row['$ Cliente'];
+          comercialData[comercial].servicios += 1;
+        }
+      });
+
+      const sorted = Object.entries(comercialData).sort((a, b) => b[1].total - a[1].total);
+
+      const container = document.getElementById('comercialesCards');
+      container.innerHTML = sorted.map(([comercial, data]) => `
+        <div class="glass-card rounded-xl p-4 hover:scale-105 transition-all">
+          <div class="icon-container p-2 rounded-lg mb-3 w-fit">
+            <i data-lucide="user" class="w-5 h-5 text-blue-400"></i>
+          </div>
+          <h4 class="font-semibold text-sm mb-1 truncate">${comercial}</h4>
+          <p class="text-2xl font-bold text-green-400 mb-1">${formatCurrency(data.total)}</p>
+          <p class="text-xs text-gray-400">${data.servicios} servicios</p>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // Update Enfermeros Cards
+    function updateEnfermerosCards() {
+      const enfermeroData = {};
+
+      filteredData.forEach(row => {
+        const enfermero = row.COMPAÑÍA;
+        if (enfermero) {
+          if (!enfermeroData[enfermero]) {
+            enfermeroData[enfermero] = {
+              servicios: 0,
+              horas: 0
+            };
+          }
+          enfermeroData[enfermero].servicios += 1;
+          enfermeroData[enfermero].horas += row.HORAS;
+        }
+      });
+
+      const sorted = Object.entries(enfermeroData)
+        .sort((a, b) => b[1].servicios - a[1].servicios)
+        .slice(0, 8); // Top 8
+
+      const container = document.getElementById('enfermerosCards');
+      container.innerHTML = sorted.map(([enfermero, data]) => `
+        <div class="glass-card rounded-xl p-4 hover:scale-105 transition-all">
+          <div class="icon-container p-2 rounded-lg mb-3 w-fit">
+            <i data-lucide="user-check" class="w-5 h-5 text-purple-400"></i>
+          </div>
+          <h4 class="font-semibold text-sm mb-1 truncate">${enfermero}</h4>
+          <p class="text-2xl font-bold text-blue-400 mb-1">${data.servicios}</p>
+          <p class="text-xs text-gray-400">${data.horas} horas trabajadas</p>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // Get week number
+    function getWeekNumber(date) {
+      const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      const dayNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+
+      // Theme toggle button
+      const themeToggle = document.getElementById('themeToggle');
+      if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+      }
+
+      // Initialize Lucide icons
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
